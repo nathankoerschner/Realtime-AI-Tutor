@@ -69,13 +69,11 @@ describe('RealtimeClient', () => {
     const client = new RealtimeClient();
     const onEvent = vi.fn();
     const onRemoteTrack = vi.fn();
-    const onMetric = vi.fn();
 
     const connectPromise = client.connect(
       { client_secret: { value: 'ephemeral' }, model: 'gpt-test' },
       onEvent,
       onRemoteTrack,
-      onMetric,
     );
 
     await Promise.resolve();
@@ -102,9 +100,13 @@ describe('RealtimeClient', () => {
     expect(onEvent).toHaveBeenCalledWith({ type: 'error', error: 'bad' });
     expect(onEvent).toHaveBeenCalledWith({ type: 'response.text.delta', delta: 'hi' });
 
+    // connect sends 1 session.update for input_audio_transcription
+    expect(peer.dataChannel.send).toHaveBeenCalledTimes(1);
+
     client.setLocalMicMuted(true);
     client.sendTextMessage('hello');
-    expect(peer.dataChannel.send).toHaveBeenCalledTimes(2);
+    // +2 for conversation.item.create + response.create
+    expect(peer.dataChannel.send).toHaveBeenCalledTimes(3);
     expect(peer.addTrack).toHaveBeenCalled();
 
     client.disconnect();

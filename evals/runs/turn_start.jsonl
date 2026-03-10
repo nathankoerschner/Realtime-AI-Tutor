@@ -1,0 +1,239 @@
+{"timestamp": "2026-03-10T19:55:38.475580+00:00", "eval_run_id": "demo_quick", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T19:55:43.574786+00:00", "eval_run_id": "demo_quick", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T19:55:47.477126+00:00", "eval_run_id": "demo_quick", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T19:55:52.917584+00:00", "eval_run_id": "demo_quick", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T19:55:57.613908+00:00", "eval_run_id": "demo_quick", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T19:56:23.347151+00:00", "eval_run_id": "scenario_photosynthesis_discovery_1773172581", "turn_number": 1, "student_input": "I don't understand how plants eat"}
+{"timestamp": "2026-03-10T19:56:29.562856+00:00", "eval_run_id": "scenario_photosynthesis_discovery_1773172581", "turn_number": 2, "student_input": "Um, through their roots?"}
+{"timestamp": "2026-03-10T19:56:33.244062+00:00", "eval_run_id": "scenario_photosynthesis_discovery_1773172581", "turn_number": 3, "student_input": "Maybe through their leaves too?"}
+{"timestamp": "2026-03-10T19:56:37.057292+00:00", "eval_run_id": "scenario_photosynthesis_discovery_1773172581", "turn_number": 4, "student_input": "The leaves take in something from the air?"}
+{"timestamp": "2026-03-10T19:56:40.769196+00:00", "eval_run_id": "scenario_photosynthesis_discovery_1773172581", "turn_number": 5, "student_input": "I think carbon dioxide"}
+{"timestamp": "2026-03-10T19:56:48.323637+00:00", "eval_run_id": "scenario_quick_response_test_1773172608", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T19:56:50.949166+00:00", "eval_run_id": "scenario_quick_response_test_1773172608", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T19:56:56.600961+00:00", "eval_run_id": "scenario_quick_response_test_1773172608", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T19:57:02.727824+00:00", "eval_run_id": "scenario_quick_response_test_1773172608", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T19:57:08.355082+00:00", "eval_run_id": "scenario_quick_response_test_1773172608", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T19:57:46.229847+00:00", "eval_run_id": "scenario_quick_response_test_1773172665", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T19:57:49.767511+00:00", "eval_run_id": "scenario_quick_response_test_1773172665", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T19:57:52.354717+00:00", "eval_run_id": "scenario_quick_response_test_1773172665", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T19:57:56.185271+00:00", "eval_run_id": "scenario_quick_response_test_1773172665", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T19:57:59.017970+00:00", "eval_run_id": "scenario_quick_response_test_1773172665", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T19:58:57.389629+00:00", "eval_run_id": "batch_1773172737_photosynthesis_discovery", "turn_number": 1, "student_input": "I don't understand how plants eat"}
+{"timestamp": "2026-03-10T19:59:02.461964+00:00", "eval_run_id": "batch_1773172737_photosynthesis_discovery", "turn_number": 2, "student_input": "Um, through their roots?"}
+{"timestamp": "2026-03-10T19:59:05.158308+00:00", "eval_run_id": "batch_1773172737_photosynthesis_discovery", "turn_number": 3, "student_input": "Maybe through their leaves too?"}
+{"timestamp": "2026-03-10T19:59:08.278979+00:00", "eval_run_id": "batch_1773172737_photosynthesis_discovery", "turn_number": 4, "student_input": "The leaves take in something from the air?"}
+{"timestamp": "2026-03-10T19:59:11.507176+00:00", "eval_run_id": "batch_1773172737_photosynthesis_discovery", "turn_number": 5, "student_input": "I think carbon dioxide"}
+{"timestamp": "2026-03-10T19:59:17.755205+00:00", "eval_run_id": "batch_1773172737_algebra_wrong_answer", "turn_number": 1, "student_input": "Can you help me solve 2x + 5 = 15?"}
+{"timestamp": "2026-03-10T19:59:21.132066+00:00", "eval_run_id": "batch_1773172737_algebra_wrong_answer", "turn_number": 2, "student_input": "I think x equals 10"}
+{"timestamp": "2026-03-10T19:59:24.956434+00:00", "eval_run_id": "batch_1773172737_algebra_wrong_answer", "turn_number": 3, "student_input": "Oh wait, let me try again"}
+{"timestamp": "2026-03-10T19:59:41.014824+00:00", "eval_run_id": "batch_1773172737_quick_response_test", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T19:59:44.038579+00:00", "eval_run_id": "batch_1773172737_quick_response_test", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T19:59:47.531242+00:00", "eval_run_id": "batch_1773172737_quick_response_test", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T19:59:51.735536+00:00", "eval_run_id": "batch_1773172737_quick_response_test", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T19:59:55.494490+00:00", "eval_run_id": "batch_1773172737_quick_response_test", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T20:03:19.221913+00:00", "eval_run_id": "batch_1773172998_photosynthesis_discovery", "turn_number": 1, "student_input": "I don't understand how plants eat"}
+{"timestamp": "2026-03-10T20:03:23.878246+00:00", "eval_run_id": "batch_1773172998_photosynthesis_discovery", "turn_number": 2, "student_input": "Um, through their roots?"}
+{"timestamp": "2026-03-10T20:03:29.045558+00:00", "eval_run_id": "batch_1773172998_photosynthesis_discovery", "turn_number": 3, "student_input": "Maybe through their leaves too?"}
+{"timestamp": "2026-03-10T20:03:34.111275+00:00", "eval_run_id": "batch_1773172998_photosynthesis_discovery", "turn_number": 4, "student_input": "The leaves take in something from the air?"}
+{"timestamp": "2026-03-10T20:03:38.350070+00:00", "eval_run_id": "batch_1773172998_photosynthesis_discovery", "turn_number": 5, "student_input": "I think carbon dioxide"}
+{"timestamp": "2026-03-10T20:03:45.830521+00:00", "eval_run_id": "batch_1773172998_algebra_wrong_answer", "turn_number": 1, "student_input": "Can you help me solve 2x + 5 = 15?"}
+{"timestamp": "2026-03-10T20:03:50.142008+00:00", "eval_run_id": "batch_1773172998_algebra_wrong_answer", "turn_number": 2, "student_input": "I think x equals 10"}
+{"timestamp": "2026-03-10T20:03:54.132923+00:00", "eval_run_id": "batch_1773172998_algebra_wrong_answer", "turn_number": 3, "student_input": "Oh wait, let me try again"}
+{"timestamp": "2026-03-10T20:04:11.282321+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 1, "student_input": "What's inside a cell?"}
+{"timestamp": "2026-03-10T20:04:15.318448+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 2, "student_input": "Like a nucleus?"}
+{"timestamp": "2026-03-10T20:04:19.265829+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 3, "student_input": "What does it do?"}
+{"timestamp": "2026-03-10T20:04:23.626844+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 4, "student_input": "Is it like the brain?"}
+{"timestamp": "2026-03-10T20:04:28.645906+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 5, "student_input": "What else is in there?"}
+{"timestamp": "2026-03-10T20:04:32.442927+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 6, "student_input": "Mitochondria?"}
+{"timestamp": "2026-03-10T20:04:37.858354+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 7, "student_input": "Wait, go back to the nucleus thing"}
+{"timestamp": "2026-03-10T20:04:44.391911+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 8, "student_input": "Does it control the mitochondria too?"}
+{"timestamp": "2026-03-10T20:04:47.961475+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 9, "student_input": "Do plant cells have the same stuff?"}
+{"timestamp": "2026-03-10T20:04:53.360406+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 10, "student_input": "What's different about them?"}
+{"timestamp": "2026-03-10T20:04:57.974497+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 11, "student_input": "Chloroplasts?"}
+{"timestamp": "2026-03-10T20:05:02.717835+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 12, "student_input": "So the nucleus controls everything in both?"}
+{"timestamp": "2026-03-10T20:05:07.659420+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 13, "student_input": "Can you give me a quick summary?"}
+{"timestamp": "2026-03-10T20:05:12.470072+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 14, "student_input": "How does this relate to photosynthesis?"}
+{"timestamp": "2026-03-10T20:05:18.560850+00:00", "eval_run_id": "batch_1773172998_extended_conversation", "turn_number": 15, "student_input": "That makes sense now!"}
+{"timestamp": "2026-03-10T20:05:33.057940+00:00", "eval_run_id": "batch_1773172998_quick_response_test", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T20:05:36.437658+00:00", "eval_run_id": "batch_1773172998_quick_response_test", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T20:05:40.222062+00:00", "eval_run_id": "batch_1773172998_quick_response_test", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T20:05:44.370441+00:00", "eval_run_id": "batch_1773172998_quick_response_test", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T20:05:49.565955+00:00", "eval_run_id": "batch_1773172998_quick_response_test", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T20:06:31.457359+00:00", "eval_run_id": "demo_quick", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T20:06:34.934639+00:00", "eval_run_id": "demo_quick", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T20:06:39.357217+00:00", "eval_run_id": "demo_quick", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T20:06:43.367023+00:00", "eval_run_id": "demo_quick", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T20:06:47.397670+00:00", "eval_run_id": "demo_quick", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T20:07:07.658239+00:00", "eval_run_id": "batch_1773173227_photosynthesis_discovery", "turn_number": 1, "student_input": "I don't understand how plants eat"}
+{"timestamp": "2026-03-10T20:07:11.893749+00:00", "eval_run_id": "batch_1773173227_photosynthesis_discovery", "turn_number": 2, "student_input": "Um, through their roots?"}
+{"timestamp": "2026-03-10T20:07:15.941515+00:00", "eval_run_id": "batch_1773173227_photosynthesis_discovery", "turn_number": 3, "student_input": "Maybe through their leaves too?"}
+{"timestamp": "2026-03-10T20:07:19.828878+00:00", "eval_run_id": "batch_1773173227_photosynthesis_discovery", "turn_number": 4, "student_input": "The leaves take in something from the air?"}
+{"timestamp": "2026-03-10T20:07:23.781304+00:00", "eval_run_id": "batch_1773173227_photosynthesis_discovery", "turn_number": 5, "student_input": "I think carbon dioxide"}
+{"timestamp": "2026-03-10T20:07:38.025945+00:00", "eval_run_id": "batch_1773173227_algebra_wrong_answer", "turn_number": 1, "student_input": "Can you help me solve 2x + 5 = 15?"}
+{"timestamp": "2026-03-10T20:07:42.179705+00:00", "eval_run_id": "batch_1773173227_algebra_wrong_answer", "turn_number": 2, "student_input": "I think x equals 10"}
+{"timestamp": "2026-03-10T20:07:44.789150+00:00", "eval_run_id": "batch_1773173227_algebra_wrong_answer", "turn_number": 3, "student_input": "Oh wait, let me try again"}
+{"timestamp": "2026-03-10T20:08:10.360265+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 1, "student_input": "What's inside a cell?"}
+{"timestamp": "2026-03-10T20:08:13.519890+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 2, "student_input": "Like a nucleus?"}
+{"timestamp": "2026-03-10T20:08:16.430354+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 3, "student_input": "What does it do?"}
+{"timestamp": "2026-03-10T20:08:20.457025+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 4, "student_input": "Is it like the brain?"}
+{"timestamp": "2026-03-10T20:08:23.485194+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 5, "student_input": "What else is in there?"}
+{"timestamp": "2026-03-10T20:08:28.464755+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 6, "student_input": "Mitochondria?"}
+{"timestamp": "2026-03-10T20:08:31.997871+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 7, "student_input": "Wait, go back to the nucleus thing"}
+{"timestamp": "2026-03-10T20:08:35.333171+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 8, "student_input": "Does it control the mitochondria too?"}
+{"timestamp": "2026-03-10T20:08:40.089168+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 9, "student_input": "Do plant cells have the same stuff?"}
+{"timestamp": "2026-03-10T20:08:46.330110+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 10, "student_input": "What's different about them?"}
+{"timestamp": "2026-03-10T20:08:49.661014+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 11, "student_input": "Chloroplasts?"}
+{"timestamp": "2026-03-10T20:08:54.206568+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 12, "student_input": "So the nucleus controls everything in both?"}
+{"timestamp": "2026-03-10T20:08:58.678807+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 13, "student_input": "Can you give me a quick summary?"}
+{"timestamp": "2026-03-10T20:09:02.891692+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 14, "student_input": "How does this relate to photosynthesis?"}
+{"timestamp": "2026-03-10T20:09:07.487472+00:00", "eval_run_id": "batch_1773173227_extended_conversation", "turn_number": 15, "student_input": "That makes sense now!"}
+{"timestamp": "2026-03-10T20:09:19.345707+00:00", "eval_run_id": "batch_1773173227_quick_response_test", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T20:09:22.288965+00:00", "eval_run_id": "batch_1773173227_quick_response_test", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T20:09:25.319918+00:00", "eval_run_id": "batch_1773173227_quick_response_test", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T20:09:30.628273+00:00", "eval_run_id": "batch_1773173227_quick_response_test", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T20:09:34.495718+00:00", "eval_run_id": "batch_1773173227_quick_response_test", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T20:10:28.626875+00:00", "eval_run_id": "batch_1773173428_photosynthesis_discovery", "turn_number": 1, "student_input": "I don't understand how plants eat"}
+{"timestamp": "2026-03-10T20:10:32.998126+00:00", "eval_run_id": "batch_1773173428_photosynthesis_discovery", "turn_number": 2, "student_input": "Um, through their roots?"}
+{"timestamp": "2026-03-10T20:10:36.436635+00:00", "eval_run_id": "batch_1773173428_photosynthesis_discovery", "turn_number": 3, "student_input": "Maybe through their leaves too?"}
+{"timestamp": "2026-03-10T20:10:40.336026+00:00", "eval_run_id": "batch_1773173428_photosynthesis_discovery", "turn_number": 4, "student_input": "The leaves take in something from the air?"}
+{"timestamp": "2026-03-10T20:10:44.538214+00:00", "eval_run_id": "batch_1773173428_photosynthesis_discovery", "turn_number": 5, "student_input": "I think carbon dioxide"}
+{"timestamp": "2026-03-10T20:10:51.545508+00:00", "eval_run_id": "batch_1773173428_algebra_wrong_answer", "turn_number": 1, "student_input": "Can you help me solve 2x + 5 = 15?"}
+{"timestamp": "2026-03-10T20:10:54.996791+00:00", "eval_run_id": "batch_1773173428_algebra_wrong_answer", "turn_number": 2, "student_input": "I think x equals 10"}
+{"timestamp": "2026-03-10T20:11:00.995438+00:00", "eval_run_id": "batch_1773173428_algebra_wrong_answer", "turn_number": 3, "student_input": "Oh wait, let me try again"}
+{"timestamp": "2026-03-10T20:11:15.282009+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 1, "student_input": "What's inside a cell?"}
+{"timestamp": "2026-03-10T20:11:18.331606+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 2, "student_input": "Like a nucleus?"}
+{"timestamp": "2026-03-10T20:11:22.888055+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 3, "student_input": "What does it do?"}
+{"timestamp": "2026-03-10T20:11:26.730104+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 4, "student_input": "Is it like the brain?"}
+{"timestamp": "2026-03-10T20:11:32.573734+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 5, "student_input": "What else is in there?"}
+{"timestamp": "2026-03-10T20:11:39.436699+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 6, "student_input": "Mitochondria?"}
+{"timestamp": "2026-03-10T20:11:44.099231+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 7, "student_input": "Wait, go back to the nucleus thing"}
+{"timestamp": "2026-03-10T20:11:48.064430+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 8, "student_input": "Does it control the mitochondria too?"}
+{"timestamp": "2026-03-10T20:11:52.388380+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 9, "student_input": "Do plant cells have the same stuff?"}
+{"timestamp": "2026-03-10T20:11:56.387239+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 10, "student_input": "What's different about them?"}
+{"timestamp": "2026-03-10T20:11:58.956898+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 11, "student_input": "Chloroplasts?"}
+{"timestamp": "2026-03-10T20:12:02.641289+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 12, "student_input": "So the nucleus controls everything in both?"}
+{"timestamp": "2026-03-10T20:12:05.927200+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 13, "student_input": "Can you give me a quick summary?"}
+{"timestamp": "2026-03-10T20:12:09.736392+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 14, "student_input": "How does this relate to photosynthesis?"}
+{"timestamp": "2026-03-10T20:12:13.891635+00:00", "eval_run_id": "batch_1773173428_extended_conversation", "turn_number": 15, "student_input": "That makes sense now!"}
+{"timestamp": "2026-03-10T20:12:28.030551+00:00", "eval_run_id": "batch_1773173428_quick_response_test", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T20:12:32.920043+00:00", "eval_run_id": "batch_1773173428_quick_response_test", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T20:12:36.171117+00:00", "eval_run_id": "batch_1773173428_quick_response_test", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T20:12:41.651352+00:00", "eval_run_id": "batch_1773173428_quick_response_test", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T20:12:45.884369+00:00", "eval_run_id": "batch_1773173428_quick_response_test", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T20:13:25.788176+00:00", "eval_run_id": "scenario_photosynthesis_discovery_1773173605", "turn_number": 1, "student_input": "I don't understand how plants eat"}
+{"timestamp": "2026-03-10T20:13:30.687176+00:00", "eval_run_id": "scenario_photosynthesis_discovery_1773173605", "turn_number": 2, "student_input": "Um, through their roots?"}
+{"timestamp": "2026-03-10T20:13:33.605482+00:00", "eval_run_id": "scenario_photosynthesis_discovery_1773173605", "turn_number": 3, "student_input": "Maybe through their leaves too?"}
+{"timestamp": "2026-03-10T20:13:37.621984+00:00", "eval_run_id": "scenario_photosynthesis_discovery_1773173605", "turn_number": 4, "student_input": "The leaves take in something from the air?"}
+{"timestamp": "2026-03-10T20:13:42.475672+00:00", "eval_run_id": "scenario_photosynthesis_discovery_1773173605", "turn_number": 5, "student_input": "I think carbon dioxide"}
+{"timestamp": "2026-03-10T21:32:41.877152+00:00", "eval_run_id": "batch_1773178361_photosynthesis_discovery", "turn_number": 1, "student_input": "I don't understand how plants eat"}
+{"timestamp": "2026-03-10T21:32:45.747369+00:00", "eval_run_id": "batch_1773178361_photosynthesis_discovery", "turn_number": 2, "student_input": "Um, through their roots?"}
+{"timestamp": "2026-03-10T21:32:49.353803+00:00", "eval_run_id": "batch_1773178361_photosynthesis_discovery", "turn_number": 3, "student_input": "Maybe through their leaves too?"}
+{"timestamp": "2026-03-10T21:32:54.428201+00:00", "eval_run_id": "batch_1773178361_photosynthesis_discovery", "turn_number": 4, "student_input": "The leaves take in something from the air?"}
+{"timestamp": "2026-03-10T21:32:59.892030+00:00", "eval_run_id": "batch_1773178361_photosynthesis_discovery", "turn_number": 5, "student_input": "I think carbon dioxide"}
+{"timestamp": "2026-03-10T21:33:16.835736+00:00", "eval_run_id": "batch_1773178361_algebra_wrong_answer", "turn_number": 1, "student_input": "Can you help me solve 2x + 5 = 15?"}
+{"timestamp": "2026-03-10T21:33:19.461155+00:00", "eval_run_id": "batch_1773178361_algebra_wrong_answer", "turn_number": 2, "student_input": "I think x equals 10"}
+{"timestamp": "2026-03-10T21:33:22.776785+00:00", "eval_run_id": "batch_1773178361_algebra_wrong_answer", "turn_number": 3, "student_input": "Oh wait, let me try again"}
+{"timestamp": "2026-03-10T21:33:27.664082+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 1, "student_input": "What's inside a cell?"}
+{"timestamp": "2026-03-10T21:33:30.817087+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 2, "student_input": "Like a nucleus?"}
+{"timestamp": "2026-03-10T21:33:33.479303+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 3, "student_input": "What does it do?"}
+{"timestamp": "2026-03-10T21:33:37.065603+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 4, "student_input": "Is it like the brain?"}
+{"timestamp": "2026-03-10T21:33:42.293133+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 5, "student_input": "What else is in there?"}
+{"timestamp": "2026-03-10T21:33:44.849618+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 6, "student_input": "Mitochondria?"}
+{"timestamp": "2026-03-10T21:33:47.952685+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 7, "student_input": "Wait, go back to the nucleus thing"}
+{"timestamp": "2026-03-10T21:33:51.109473+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 8, "student_input": "Does it control the mitochondria too?"}
+{"timestamp": "2026-03-10T21:33:53.446954+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 9, "student_input": "Do plant cells have the same stuff?"}
+{"timestamp": "2026-03-10T21:33:56.705402+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 10, "student_input": "What's different about them?"}
+{"timestamp": "2026-03-10T21:33:58.984114+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 11, "student_input": "Chloroplasts?"}
+{"timestamp": "2026-03-10T21:34:02.444673+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 12, "student_input": "So the nucleus controls everything in both?"}
+{"timestamp": "2026-03-10T21:34:05.300227+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 13, "student_input": "Can you give me a quick summary?"}
+{"timestamp": "2026-03-10T21:34:08.011394+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 14, "student_input": "How does this relate to photosynthesis?"}
+{"timestamp": "2026-03-10T21:34:11.203344+00:00", "eval_run_id": "batch_1773178361_extended_conversation", "turn_number": 15, "student_input": "That makes sense now!"}
+{"timestamp": "2026-03-10T21:34:21.185081+00:00", "eval_run_id": "batch_1773178361_quick_response_test", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T21:34:23.761186+00:00", "eval_run_id": "batch_1773178361_quick_response_test", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T21:34:27.448343+00:00", "eval_run_id": "batch_1773178361_quick_response_test", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T21:34:30.404349+00:00", "eval_run_id": "batch_1773178361_quick_response_test", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T21:34:33.102000+00:00", "eval_run_id": "batch_1773178361_quick_response_test", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T21:35:35.044092+00:00", "eval_run_id": "batch_1773178534_photosynthesis_discovery", "turn_number": 1, "student_input": "I don't understand how plants eat"}
+{"timestamp": "2026-03-10T21:35:37.491725+00:00", "eval_run_id": "batch_1773178534_photosynthesis_discovery", "turn_number": 2, "student_input": "Um, through their roots?"}
+{"timestamp": "2026-03-10T21:35:39.587471+00:00", "eval_run_id": "batch_1773178534_photosynthesis_discovery", "turn_number": 3, "student_input": "Maybe through their leaves too?"}
+{"timestamp": "2026-03-10T21:35:42.414992+00:00", "eval_run_id": "batch_1773178534_photosynthesis_discovery", "turn_number": 4, "student_input": "The leaves take in something from the air?"}
+{"timestamp": "2026-03-10T21:35:45.220242+00:00", "eval_run_id": "batch_1773178534_photosynthesis_discovery", "turn_number": 5, "student_input": "I think carbon dioxide"}
+{"timestamp": "2026-03-10T21:35:56.688968+00:00", "eval_run_id": "batch_1773178534_algebra_wrong_answer", "turn_number": 1, "student_input": "Can you help me solve 2x + 5 = 15?"}
+{"timestamp": "2026-03-10T21:35:59.555408+00:00", "eval_run_id": "batch_1773178534_algebra_wrong_answer", "turn_number": 2, "student_input": "I think x equals 10"}
+{"timestamp": "2026-03-10T21:36:02.355816+00:00", "eval_run_id": "batch_1773178534_algebra_wrong_answer", "turn_number": 3, "student_input": "Oh wait, let me try again"}
+{"timestamp": "2026-03-10T21:36:14.191844+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 1, "student_input": "What's inside a cell?"}
+{"timestamp": "2026-03-10T21:36:21.630226+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 2, "student_input": "Like a nucleus?"}
+{"timestamp": "2026-03-10T21:36:23.670278+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 3, "student_input": "What does it do?"}
+{"timestamp": "2026-03-10T21:36:26.438036+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 4, "student_input": "Is it like the brain?"}
+{"timestamp": "2026-03-10T21:36:29.395803+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 5, "student_input": "What else is in there?"}
+{"timestamp": "2026-03-10T21:36:31.661696+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 6, "student_input": "Mitochondria?"}
+{"timestamp": "2026-03-10T21:36:34.465533+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 7, "student_input": "Wait, go back to the nucleus thing"}
+{"timestamp": "2026-03-10T21:36:37.394828+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 8, "student_input": "Does it control the mitochondria too?"}
+{"timestamp": "2026-03-10T21:36:40.568953+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 9, "student_input": "Do plant cells have the same stuff?"}
+{"timestamp": "2026-03-10T21:36:43.641229+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 10, "student_input": "What's different about them?"}
+{"timestamp": "2026-03-10T21:36:46.857841+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 11, "student_input": "Chloroplasts?"}
+{"timestamp": "2026-03-10T21:36:49.681146+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 12, "student_input": "So the nucleus controls everything in both?"}
+{"timestamp": "2026-03-10T21:36:53.367726+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 13, "student_input": "Can you give me a quick summary?"}
+{"timestamp": "2026-03-10T21:36:58.897761+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 14, "student_input": "How does this relate to photosynthesis?"}
+{"timestamp": "2026-03-10T21:37:01.897828+00:00", "eval_run_id": "batch_1773178534_extended_conversation", "turn_number": 15, "student_input": "That makes sense now!"}
+{"timestamp": "2026-03-10T21:37:10.293642+00:00", "eval_run_id": "batch_1773178534_quick_response_test", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T21:37:12.722504+00:00", "eval_run_id": "batch_1773178534_quick_response_test", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T21:37:16.102984+00:00", "eval_run_id": "batch_1773178534_quick_response_test", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T21:37:18.364599+00:00", "eval_run_id": "batch_1773178534_quick_response_test", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T21:37:20.917333+00:00", "eval_run_id": "batch_1773178534_quick_response_test", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T21:39:54.540429+00:00", "eval_run_id": "batch_1773178794_photosynthesis_discovery", "turn_number": 1, "student_input": "I don't understand how plants eat"}
+{"timestamp": "2026-03-10T21:39:57.515088+00:00", "eval_run_id": "batch_1773178794_photosynthesis_discovery", "turn_number": 2, "student_input": "Um, through their roots?"}
+{"timestamp": "2026-03-10T21:40:00.172792+00:00", "eval_run_id": "batch_1773178794_photosynthesis_discovery", "turn_number": 3, "student_input": "Maybe through their leaves too?"}
+{"timestamp": "2026-03-10T21:40:02.315097+00:00", "eval_run_id": "batch_1773178794_photosynthesis_discovery", "turn_number": 4, "student_input": "The leaves take in something from the air?"}
+{"timestamp": "2026-03-10T21:40:04.672476+00:00", "eval_run_id": "batch_1773178794_photosynthesis_discovery", "turn_number": 5, "student_input": "I think carbon dioxide"}
+{"timestamp": "2026-03-10T21:40:11.603575+00:00", "eval_run_id": "batch_1773178794_algebra_wrong_answer", "turn_number": 1, "student_input": "Can you help me solve 2x + 5 = 15?"}
+{"timestamp": "2026-03-10T21:40:13.976113+00:00", "eval_run_id": "batch_1773178794_algebra_wrong_answer", "turn_number": 2, "student_input": "I think x equals 10"}
+{"timestamp": "2026-03-10T21:40:16.535876+00:00", "eval_run_id": "batch_1773178794_algebra_wrong_answer", "turn_number": 3, "student_input": "Oh wait, let me try again"}
+{"timestamp": "2026-03-10T21:40:21.260713+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 1, "student_input": "What's inside a cell?"}
+{"timestamp": "2026-03-10T21:40:24.727945+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 2, "student_input": "Like a nucleus?"}
+{"timestamp": "2026-03-10T21:40:27.616837+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 3, "student_input": "What does it do?"}
+{"timestamp": "2026-03-10T21:40:29.849507+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 4, "student_input": "Is it like the brain?"}
+{"timestamp": "2026-03-10T21:40:32.337574+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 5, "student_input": "What else is in there?"}
+{"timestamp": "2026-03-10T21:40:36.250472+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 6, "student_input": "Mitochondria?"}
+{"timestamp": "2026-03-10T21:40:38.662363+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 7, "student_input": "Wait, go back to the nucleus thing"}
+{"timestamp": "2026-03-10T21:40:42.234870+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 8, "student_input": "Does it control the mitochondria too?"}
+{"timestamp": "2026-03-10T21:40:46.723688+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 9, "student_input": "Do plant cells have the same stuff?"}
+{"timestamp": "2026-03-10T21:40:50.164773+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 10, "student_input": "What's different about them?"}
+{"timestamp": "2026-03-10T21:40:53.816233+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 11, "student_input": "Chloroplasts?"}
+{"timestamp": "2026-03-10T21:40:56.779620+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 12, "student_input": "So the nucleus controls everything in both?"}
+{"timestamp": "2026-03-10T21:41:00.583265+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 13, "student_input": "Can you give me a quick summary?"}
+{"timestamp": "2026-03-10T21:41:05.602562+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 14, "student_input": "How does this relate to photosynthesis?"}
+{"timestamp": "2026-03-10T21:41:08.603193+00:00", "eval_run_id": "batch_1773178794_extended_conversation", "turn_number": 15, "student_input": "That makes sense now!"}
+{"timestamp": "2026-03-10T21:41:19.464187+00:00", "eval_run_id": "batch_1773178794_quick_response_test", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T21:41:22.731519+00:00", "eval_run_id": "batch_1773178794_quick_response_test", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T21:41:25.074811+00:00", "eval_run_id": "batch_1773178794_quick_response_test", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T21:41:28.150938+00:00", "eval_run_id": "batch_1773178794_quick_response_test", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T21:41:32.738301+00:00", "eval_run_id": "batch_1773178794_quick_response_test", "turn_number": 5, "student_input": "Three fourths!"}
+{"timestamp": "2026-03-10T21:42:37.416384+00:00", "eval_run_id": "batch_1773178957_photosynthesis_discovery", "turn_number": 1, "student_input": "I don't understand how plants eat"}
+{"timestamp": "2026-03-10T21:42:40.206090+00:00", "eval_run_id": "batch_1773178957_photosynthesis_discovery", "turn_number": 2, "student_input": "Um, through their roots?"}
+{"timestamp": "2026-03-10T21:42:42.833963+00:00", "eval_run_id": "batch_1773178957_photosynthesis_discovery", "turn_number": 3, "student_input": "Maybe through their leaves too?"}
+{"timestamp": "2026-03-10T21:42:45.837598+00:00", "eval_run_id": "batch_1773178957_photosynthesis_discovery", "turn_number": 4, "student_input": "The leaves take in something from the air?"}
+{"timestamp": "2026-03-10T21:42:48.975164+00:00", "eval_run_id": "batch_1773178957_photosynthesis_discovery", "turn_number": 5, "student_input": "I think carbon dioxide"}
+{"timestamp": "2026-03-10T21:42:53.371105+00:00", "eval_run_id": "batch_1773178957_algebra_wrong_answer", "turn_number": 1, "student_input": "Can you help me solve 2x + 5 = 15?"}
+{"timestamp": "2026-03-10T21:42:56.793963+00:00", "eval_run_id": "batch_1773178957_algebra_wrong_answer", "turn_number": 2, "student_input": "I think x equals 10"}
+{"timestamp": "2026-03-10T21:42:59.254369+00:00", "eval_run_id": "batch_1773178957_algebra_wrong_answer", "turn_number": 3, "student_input": "Oh wait, let me try again"}
+{"timestamp": "2026-03-10T21:43:03.974801+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 1, "student_input": "What's inside a cell?"}
+{"timestamp": "2026-03-10T21:43:07.240332+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 2, "student_input": "Like a nucleus?"}
+{"timestamp": "2026-03-10T21:43:09.606416+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 3, "student_input": "What does it do?"}
+{"timestamp": "2026-03-10T21:43:15.451318+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 4, "student_input": "Is it like the brain?"}
+{"timestamp": "2026-03-10T21:43:20.353484+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 5, "student_input": "What else is in there?"}
+{"timestamp": "2026-03-10T21:43:23.008983+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 6, "student_input": "Mitochondria?"}
+{"timestamp": "2026-03-10T21:43:26.186145+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 7, "student_input": "Wait, go back to the nucleus thing"}
+{"timestamp": "2026-03-10T21:43:29.973095+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 8, "student_input": "Does it control the mitochondria too?"}
+{"timestamp": "2026-03-10T21:43:32.964933+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 9, "student_input": "Do plant cells have the same stuff?"}
+{"timestamp": "2026-03-10T21:43:36.680213+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 10, "student_input": "What's different about them?"}
+{"timestamp": "2026-03-10T21:43:39.949249+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 11, "student_input": "Chloroplasts?"}
+{"timestamp": "2026-03-10T21:43:43.612391+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 12, "student_input": "So the nucleus controls everything in both?"}
+{"timestamp": "2026-03-10T21:43:46.971302+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 13, "student_input": "Can you give me a quick summary?"}
+{"timestamp": "2026-03-10T21:43:51.375184+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 14, "student_input": "How does this relate to photosynthesis?"}
+{"timestamp": "2026-03-10T21:43:55.778560+00:00", "eval_run_id": "batch_1773178957_extended_conversation", "turn_number": 15, "student_input": "That makes sense now!"}
+{"timestamp": "2026-03-10T21:44:02.141883+00:00", "eval_run_id": "batch_1773178957_quick_response_test", "turn_number": 1, "student_input": "What's 1/2 + 1/4?"}
+{"timestamp": "2026-03-10T21:44:04.672532+00:00", "eval_run_id": "batch_1773178957_quick_response_test", "turn_number": 2, "student_input": "I don't know"}
+{"timestamp": "2026-03-10T21:44:08.680622+00:00", "eval_run_id": "batch_1773178957_quick_response_test", "turn_number": 3, "student_input": "Two fourths?"}
+{"timestamp": "2026-03-10T21:44:13.129341+00:00", "eval_run_id": "batch_1773178957_quick_response_test", "turn_number": 4, "student_input": "Plus one fourth?"}
+{"timestamp": "2026-03-10T21:44:16.678624+00:00", "eval_run_id": "batch_1773178957_quick_response_test", "turn_number": 5, "student_input": "Three fourths!"}

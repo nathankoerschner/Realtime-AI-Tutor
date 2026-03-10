@@ -78,6 +78,45 @@ Run all tests:
 ./scripts/test-summary.sh
 ```
 
+## Evaluation Framework
+
+The project includes a comprehensive evaluation system for measuring tutoring effectiveness:
+
+### Quick Start
+```bash
+# Run all evaluation scenarios
+python scripts/run-evals.py run
+
+# Run specific scenarios
+python scripts/run-evals.py run --scenarios photosynthesis_discovery algebra_wrong_answer
+
+# Generate performance analysis
+python scripts/run-evals.py analyze --hours 24
+```
+
+### Key Metrics
+- **Performance**: Time to first frame, response latency, connection reliability
+- **Socratic Method**: Answer-giving detection, question quality, guidance effectiveness
+- **Conversation Quality**: Context retention, adaptability, educational progression
+
+### Example Results
+```bash
+📊 EVALUATION SUMMARY
+   Scenarios: 3/4 passed
+   Success Rate: 75.0%
+   
+🎭 SOCRATIC METHOD SCORES  
+   Overall: 0.82/1.0
+   Question Quality: 0.87/1.0
+   Answer Giving: 0.15/1.0 (lower is better)
+   
+⚡ PERFORMANCE
+   Avg Time to First Frame: 420ms (B)
+   Avg Response Latency: 1200ms (B)
+```
+
+See [`evals/README.md`](evals/README.md) and [`evals/USAGE.md`](evals/USAGE.md) for comprehensive documentation.
+
 ## Production
 
 ```bash

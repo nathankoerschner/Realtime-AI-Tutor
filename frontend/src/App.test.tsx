@@ -16,21 +16,11 @@ vi.mock('./components/Avatar/Avatar', () => ({
 }));
 
 vi.mock('./components/SessionControls/SessionControls', () => ({
-  SessionControls: ({ state, muted, onStop, onToggleMute, keyboardOpen, onToggleKeyboard }: Record<string, any>) => (
+  SessionControls: ({ state, muted, onStop, onToggleMute }: Record<string, any>) => (
     <div>
-      <div data-testid="session-state">{JSON.stringify({ state, muted, keyboardOpen })}</div>
+      <div data-testid="session-state">{JSON.stringify({ state, muted })}</div>
       <button onClick={onStop}>Stop session</button>
       <button onClick={onToggleMute}>Toggle mute</button>
-      <button onClick={onToggleKeyboard}>Toggle keyboard</button>
-    </div>
-  ),
-}));
-
-vi.mock('./components/TextInput/TextInput', () => ({
-  TextInput: ({ disabled, onSubmit }: Record<string, any>) => (
-    <div>
-      <div data-testid="keyboard-disabled">{String(disabled)}</div>
-      <button onClick={() => onSubmit('typed question')}>Send typed</button>
     </div>
   ),
 }));
@@ -64,6 +54,8 @@ describe('App', () => {
     mockDispose.mockReset();
     mockResetSpeechFrameFlag.mockReset();
     vi.stubGlobal('fetch', vi.fn());
+    // jsdom doesn't have scrollIntoView
+    Element.prototype.scrollIntoView = vi.fn();
   });
 
   it('starts a session, handles remote audio and realtime events, and supports lesson/topic actions', async () => {
@@ -98,10 +90,10 @@ describe('App', () => {
     fireEvent.keyDown(window, { key: 'm', target: document.body });
     await waitFor(() => expect(mockSetLocalMicMuted).toHaveBeenCalledWith(true));
 
-    fireEvent.click(screen.getByRole('button', { name: 'Toggle keyboard' }));
-    expect(screen.getByRole('button', { name: 'Send typed' })).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'Send typed' }));
+    // Type and send a message via the chat panel
+    const chatInput = screen.getByPlaceholderText('Type a message…');
+    fireEvent.change(chatInput, { target: { value: 'typed question' } });
+    fireEvent.submit(chatInput.closest('form')!);
     expect(mockSendTextMessage).toHaveBeenCalledWith('typed question');
 
     fireEvent.click(screen.getByLabelText('Dismiss error'));

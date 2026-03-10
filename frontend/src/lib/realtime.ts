@@ -85,6 +85,18 @@ export class RealtimeClient {
     };
     await this.peer.setRemoteDescription(answer);
     await channelReady;
+
+    // Enable input audio transcription so user speech appears in chat
+    this.dataChannel!.send(
+      JSON.stringify({
+        type: 'session.update',
+        session: {
+          input_audio_transcription: {
+            model: 'whisper-1',
+          },
+        },
+      }),
+    );
   }
 
   setLocalMicMuted(muted: boolean) {

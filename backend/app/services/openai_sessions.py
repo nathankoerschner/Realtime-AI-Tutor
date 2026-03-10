@@ -48,6 +48,9 @@ async def create_realtime_session(
             "create_response": True,
             "interrupt_response": True,
         },
+        "input_audio_transcription": {
+            "model": "whisper-1",
+        },
         "temperature": 0.7,
     }
 

@@ -1,0 +1,53 @@
+{"timestamp": "2026-03-10T19:55:38.471812+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 521.97, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T19:56:23.343319+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 2137.66, "topic_hint": "photosynthesis", "student_level": "grade 8"}
+{"timestamp": "2026-03-10T19:56:48.320400+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 267.95, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T19:57:46.226747+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 271.57, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T19:58:57.388120+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 201.4, "topic_hint": "photosynthesis", "student_level": "grade 8"}
+{"timestamp": "2026-03-10T19:59:17.751878+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 454.21, "topic_hint": "solving linear equations", "student_level": "grade 9"}
+{"timestamp": "2026-03-10T19:59:41.012071+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 213.4, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T20:03:19.217981+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 273.3, "topic_hint": "photosynthesis", "student_level": "grade 8"}
+{"timestamp": "2026-03-10T20:03:45.827043+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 254.42, "topic_hint": "solving linear equations", "student_level": "grade 9"}
+{"timestamp": "2026-03-10T20:04:11.279237+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 388.02, "topic_hint": "cell structure", "student_level": "grade 7"}
+{"timestamp": "2026-03-10T20:05:33.055099+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 264.02, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T20:06:31.454089+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 253.66, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T20:07:07.656964+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 168.45, "topic_hint": "photosynthesis", "student_level": "grade 8"}
+{"timestamp": "2026-03-10T20:07:38.022336+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 318.07, "topic_hint": "solving linear equations", "student_level": "grade 9"}
+{"timestamp": "2026-03-10T20:08:10.357380+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 228.08, "topic_hint": "cell structure", "student_level": "grade 7"}
+{"timestamp": "2026-03-10T20:09:19.341447+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 300.94, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T20:10:28.623952+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 298.02, "topic_hint": "photosynthesis", "student_level": "grade 8"}
+{"timestamp": "2026-03-10T20:10:51.542890+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 310.89, "topic_hint": "solving linear equations", "student_level": "grade 9"}
+{"timestamp": "2026-03-10T20:11:15.278295+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 512.33, "topic_hint": "cell structure", "student_level": "grade 7"}
+{"timestamp": "2026-03-10T20:12:28.027957+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 206.52, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T20:13:25.784194+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 272.3, "topic_hint": "photosynthesis", "student_level": "grade 8"}
+{"timestamp": "2026-03-10T20:59:01.346731+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 576.74, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T21:32:41.873652+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 556.71, "topic_hint": "photosynthesis", "student_level": "grade 8"}
+{"timestamp": "2026-03-10T21:33:16.832568+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 541.58, "topic_hint": "solving linear equations", "student_level": "grade 9"}
+{"timestamp": "2026-03-10T21:33:27.661260+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 191.68, "topic_hint": "cell structure", "student_level": "grade 7"}
+{"timestamp": "2026-03-10T21:34:21.183952+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 237.34, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T21:35:35.040753+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 317.8, "topic_hint": "photosynthesis", "student_level": "grade 8"}
+{"timestamp": "2026-03-10T21:35:56.686232+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 501.43, "topic_hint": "solving linear equations", "student_level": "grade 9"}
+{"timestamp": "2026-03-10T21:36:14.189057+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 233.31, "topic_hint": "cell structure", "student_level": "grade 7"}
+{"timestamp": "2026-03-10T21:37:10.290408+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 373.78, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T21:39:54.536410+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 366.66, "topic_hint": "photosynthesis", "student_level": "grade 8"}
+{"timestamp": "2026-03-10T21:40:11.599876+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 306.56, "topic_hint": "solving linear equations", "student_level": "grade 9"}
+{"timestamp": "2026-03-10T21:40:21.256997+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 212.89, "topic_hint": "cell structure", "student_level": "grade 7"}
+{"timestamp": "2026-03-10T21:41:19.461613+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 212.99, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T21:42:37.413080+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 234.62, "topic_hint": "photosynthesis", "student_level": "grade 8"}
+{"timestamp": "2026-03-10T21:42:53.368104+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 232.4, "topic_hint": "solving linear equations", "student_level": "grade 9"}
+{"timestamp": "2026-03-10T21:43:03.971723+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 198.72, "topic_hint": "cell structure", "student_level": "grade 7"}
+{"timestamp": "2026-03-10T21:44:02.138973+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 213.28, "topic_hint": "fractions", "student_level": "grade 6"}
+{"timestamp": "2026-03-10T21:50:53.587212+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 545.33, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T21:50:54.925130+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 208.21, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T21:50:56.574893+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 749.59, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T21:50:57.921619+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 272.55, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T21:50:59.118117+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 321.89, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T21:51:03.314597+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 238.46, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T21:51:26.042272+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 307.48, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T21:54:20.151829+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 329.26, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T21:55:55.069721+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 360.77, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T21:57:20.997367+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 313.05, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T22:12:33.289914+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 470.84, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T22:16:26.790437+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 552.27, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T22:17:10.683740+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 329.28, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T22:18:21.273865+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 329.71, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-10T22:19:40.428650+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 655.53, "topic_hint": null, "student_level": "grades 6-12"}
