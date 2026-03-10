@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Avatar } from './components/Avatar/Avatar';
 import { Overlay } from './components/Overlay/Overlay';
 import { SessionControls } from './components/SessionControls/SessionControls';
@@ -7,33 +7,23 @@ import { StreamingVisemeEngine, type AudioAnalysisSnapshot, type VisemeKey } fro
 import { MetricsTracker, type DerivedMetrics } from './lib/metrics';
 import { RealtimeClient, type RealtimeEvent, type SessionBootstrap } from './lib/realtime';
 
-type ChatMessage = {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  text: string;
-};
-
 export default function App() {
   const realtimeRef = useRef(new RealtimeClient());
   const metricsRef = useRef(new MetricsTracker());
   const visemeEngineRef = useRef(new StreamingVisemeEngine());
+  const textInputRef = useRef<HTMLInputElement>(null);
+  const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [connectionState, setConnectionState] = useState('idle');
-  const [overlayVisible, setOverlayVisible] = useState(true);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: crypto.randomUUID(),
-      role: 'system',
-      text: 'Start a session, then speak or type. The tutor will respond with voice and animated avatar feedback.',
-    },
-  ]);
+  const [overlayVisible, setOverlayVisible] = useState(false);
   const [viseme, setViseme] = useState<VisemeKey>('rest');
   const [speaking, setSpeaking] = useState(false);
   const [latestMetrics, setLatestMetrics] = useState<DerivedMetrics | null>(null);
   const [history, setHistory] = useState<DerivedMetrics[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
-  const assistantDraftId = useRef<string | null>(null);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
 
   useEffect(() => {
     realtimeRef.current.setLocalMicMuted(muted);
@@ -44,6 +34,29 @@ export default function App() {
       realtimeRef.current.disconnect();
       visemeEngineRef.current.dispose();
     };
+  }, []);
+
+  // Keyboard shortcut: Ctrl+Shift+D to toggle overlay, M to toggle mute (when not typing)
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        e.preventDefault();
+        setOverlayVisible((v) => !v);
+      }
+      // 'M' to toggle mute only when not focused on an input/textarea
+      if (e.key === 'm' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName) && connectionState === 'connected') {
+        e.preventDefault();
+        toggleMute();
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [connectionState]);
+
+  const showError = useCallback((msg: string) => {
+    setError(msg);
+    if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+    errorTimerRef.current = setTimeout(() => setError(null), 8000);
   }, []);
 
   async function startSession() {
@@ -61,17 +74,11 @@ export default function App() {
       const bootstrap = (await response.json()) as SessionBootstrap;
       await realtimeRef.current.connect(bootstrap, handleRealtimeEvent, handleRemoteAudio);
       setConnectionState('connected');
-      setMessages((current) => [
-        ...current,
-        {
-          id: crypto.randomUUID(),
-          role: 'system',
-          text: 'Session connected. Ask about any topic and the tutor will narrow it to 1–3 concepts.',
-        },
-      ]);
+      // Focus text input after connection
+      setTimeout(() => textInputRef.current?.focus(), 100);
     } catch (sessionError) {
       setConnectionState('idle');
-      setError(sessionError instanceof Error ? sessionError.message : 'Unable to start session');
+      showError(sessionError instanceof Error ? sessionError.message : 'Unable to start session');
     }
   }
 
@@ -109,8 +116,6 @@ export default function App() {
         break;
       case 'response.text.delta': {
         metricsRef.current.markFirstTextDelta();
-        const delta = String(event.delta ?? '');
-        appendAssistantDelta(delta);
         syncMetrics();
         break;
       }
@@ -121,49 +126,24 @@ export default function App() {
       case 'response.done':
       case 'response.output_audio.done':
         metricsRef.current.completeTurn();
-        assistantDraftId.current = null;
         syncMetrics();
         break;
-      case 'conversation.item.input_audio_transcription.completed': {
-        const transcript = String(event.transcript ?? '').trim();
-        if (transcript) addMessage('user', transcript);
-        break;
-      }
       case 'error':
-        setError(typeof event.error === 'object' ? JSON.stringify(event.error) : 'Realtime error');
+        showError(typeof event.error === 'object' ? JSON.stringify(event.error) : 'Realtime error');
         break;
       default:
         break;
     }
   }
 
-  function addMessage(role: ChatMessage['role'], text: string) {
-    setMessages((current) => [...current, { id: crypto.randomUUID(), role, text }]);
-  }
-
-  function appendAssistantDelta(delta: string) {
-    if (!assistantDraftId.current) {
-      assistantDraftId.current = crypto.randomUUID();
-      setMessages((current) => [...current, { id: assistantDraftId.current!, role: 'assistant', text: delta }]);
-      return;
-    }
-    setMessages((current) =>
-      current.map((message) =>
-        message.id === assistantDraftId.current ? { ...message, text: `${message.text}${delta}` } : message,
-      ),
-    );
-  }
-
   async function sendText(text: string) {
     try {
-      addMessage('user', text);
-      assistantDraftId.current = null;
       visemeEngineRef.current.resetSpeechFrameFlag();
       metricsRef.current.beginTurn();
       syncMetrics();
       realtimeRef.current.sendTextMessage(text);
     } catch (sendError) {
-      setError(sendError instanceof Error ? sendError.message : 'Unable to send message');
+      showError(sendError instanceof Error ? sendError.message : 'Unable to send message');
     }
   }
 
@@ -195,31 +175,51 @@ export default function App() {
         onExport={exportMetrics}
       />
 
+      {/* Error toast */}
+      {error && (
+        <div className="error-toast" role="alert">
+          <p>{error}</p>
+          <button className="error-toast-dismiss" onClick={() => setError(null)} aria-label="Dismiss error">✕</button>
+        </div>
+      )}
+
       <section className="hero-panel">
-        <Avatar viseme={viseme} speaking={speaking} connected={connectionState === 'connected'} />
-      </section>
-
-      <section className="controls-panel">
-        <SessionControls
-          state={connectionState}
-          muted={muted}
-          onStart={startSession}
-          onStop={stopSession}
-          onToggleMute={toggleMute}
-          overlayVisible={overlayVisible}
-          onToggleOverlay={() => setOverlayVisible((current) => !current)}
-        />
-        <TextInput disabled={connectionState !== 'connected'} onSubmit={sendText} />
-        {error ? <p className="error-banner">{error}</p> : null}
-      </section>
-
-      <section className="messages-panel" aria-label="Recent transcript">
-        {messages.slice(-8).map((message) => (
-          <article key={message.id} className={`message ${message.role}`}>
-            <span>{message.role}</span>
-            <p>{message.text}</p>
-          </article>
-        ))}
+        {connectionState === 'idle' ? (
+          <>
+            <header className="app-header app-header-centered">
+              <span className="eyebrow">Live + AI</span>
+              <h1>AI Tutor</h1>
+            </header>
+            <button className="start-orb" onClick={startSession}>Start</button>
+          </>
+        ) : (
+          <>
+            <Avatar
+              viseme={viseme}
+              speaking={speaking}
+              connected={connectionState === 'connected'}
+              connecting={connectionState === 'connecting'}
+            />
+            <SessionControls
+              state={connectionState}
+              muted={muted}
+              onStop={stopSession}
+              onToggleMute={toggleMute}
+              overlayVisible={overlayVisible}
+              onToggleOverlay={() => setOverlayVisible((current) => !current)}
+              keyboardOpen={keyboardOpen}
+              onToggleKeyboard={() => {
+                setKeyboardOpen((v) => {
+                  if (!v) setTimeout(() => textInputRef.current?.focus(), 100);
+                  return !v;
+                });
+              }}
+            />
+            {keyboardOpen && (
+              <TextInput disabled={connectionState !== 'connected'} onSubmit={sendText} inputRef={textInputRef} />
+            )}
+          </>
+        )}
       </section>
     </main>
   );

@@ -1,34 +1,101 @@
-# Live AI Video Tutor
+# AI Tutor
 
-Prototype implementation of the plan in `plan.md`: a low-latency AI tutor with voice/text input, voice output, avatar feedback, and client-side latency instrumentation.
+A voice-first tutoring prototype built with FastAPI, React, and the OpenAI Realtime API.
+
+## What this app is
+
+This project is a lightweight conversational tutor:
+
+- **Backend:** FastAPI service that creates ephemeral OpenAI Realtime sessions and serves the built frontend
+- **Frontend:** Vite + React + TypeScript single-page app
+- **Realtime transport:** browser **WebRTC** connection to OpenAI Realtime
+- **Tutor UI:** a stylized animated SVG avatar with blink, idle, and audio-reactive mouth states
+- **Metrics:** client-side latency tracking shown in an optional developer overlay
+
+## What is implemented today
+
+- `POST /api/realtime/session` to create an ephemeral Realtime session
+- Direct browser connection to OpenAI Realtime using **WebRTC**
+- Voice input from the microphone
+- Voice output from the tutor
+- Optional typed input during a live session
+- Warm Socratic tutor instructions using the `alloy` voice
+- Animated SVG avatar driven by a lightweight streaming audio analyzer
+- Developer overlay with recent latency metrics and JSON export
+- FastAPI static hosting for `frontend/dist`
+- Railway-ready Docker deployment
+
+## Current architecture
+
+### Backend
+
+The backend is intentionally small and stays out of the media path.
+
+Responsibilities:
+
+- read environment config
+- create OpenAI Realtime sessions
+- return the session payload to the browser
+- serve `/api/health`
+- serve the built frontend in production
+
+Key files:
+
+- `backend/app/main.py`
+- `backend/app/routes/realtime.py`
+- `backend/app/services/openai_sessions.py`
+- `backend/app/config.py`
+
+### Frontend
+
+The frontend owns the live tutoring experience.
+
+Responsibilities:
+
+- request a Realtime session from the backend
+- open a **WebRTC** connection to OpenAI
+- capture microphone audio
+- play the remote tutor audio track
+- send text messages over the Realtime data channel
+- animate the SVG avatar from remote audio energy
+- collect timing markers for the developer overlay
+
+Key files:
+
+- `frontend/src/App.tsx`
+- `frontend/src/lib/realtime.ts`
+- `frontend/src/lib/audio.ts`
+- `frontend/src/lib/metrics.ts`
+- `frontend/src/components/Avatar/Avatar.tsx`
+
+## Important implementation notes
+
+- The app uses **WebRTC**, not a raw WebSocket connection, for browser realtime media.
+- The avatar is **not** driven by a phoneme model. It currently uses a lightweight audio-level analyzer and mouth-state mapper.
+- The backend does **not** proxy audio.
+- There is no persistent transcript store or session history.
+- Latency metrics are inferred from Realtime events and local render timing.
 
 ## Repo layout
 
-- `backend/` — FastAPI token service and static frontend hosting
-- `frontend/` — Vite + React + TypeScript app
-- `docs/` — decision log, latency notes, limitations, transcript template
-
-## Features implemented
-
-- FastAPI endpoint: `POST /api/realtime/session`
-- Direct browser connection to OpenAI Realtime using an ephemeral session
-- Voice-first tutoring flow via WebRTC mic + remote audio
-- Text input path over the Realtime data channel
-- Warm Socratic tutor prompt using `alloy`
-- Large SVG avatar with speaking states, idle motion, and metrics-driven response timing
-- Developer overlay with inferred per-turn latency and JSON export
-
-## Current caveat
-
-The avatar pipeline is structured around pluggable viseme extraction, but the included browser implementation is currently a lightweight streaming analyzer rather than a production phoneme model. See `docs/limitations.md`.
+- `backend/` — FastAPI app
+- `frontend/` — Vite React app
+- `docs/` — architecture notes, decisions, limitations, and transcript template
+- `Dockerfile` — container build for Railway or local Docker runs
+- `railway.json` — Railway deploy config
 
 ## Setup
 
 ### 1. Environment
 
-Copy `.env.example` to `.env` and set `OPENAI_API_KEY`.
+Copy `.env.example` to `.env` and set:
 
-### 2. Backend
+- `OPENAI_API_KEY`
+- optionally `OPENAI_REALTIME_MODEL`
+- optionally `APP_ENV`
+- optionally `PORT`
+
+### 2. Run the backend
 
 ```bash
 cd backend
@@ -36,7 +103,7 @@ uv sync
 uv run uvicorn app.main:app --reload --port 8000
 ```
 
-### 3. Frontend
+### 3. Run the frontend
 
 ```bash
 cd frontend
@@ -44,7 +111,7 @@ npm install
 npm run dev
 ```
 
-The Vite dev server proxies `/api` to the FastAPI server.
+The Vite dev server proxies `/api` to the FastAPI backend.
 
 ## Production build
 
@@ -53,35 +120,32 @@ cd frontend && npm install && npm run build
 cd ../backend && uv sync && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-FastAPI serves `frontend/dist` when it exists.
+When `frontend/dist` exists, FastAPI serves the SPA.
 
-## Railway deployment with GitHub Actions
-
-### Files added
-
-- `Dockerfile` — builds the React frontend and runs the FastAPI app
-- `railway.json` — tells Railway to use the Dockerfile and health check `/api/health`
-- `.github/workflows/railway-deploy.yml` — builds the app on every push to `main` and deploys with the Railway CLI
-- `backend/requirements.txt` — lightweight backend dependency list for CI and Docker
-
-### One-time Railway setup
-
-1. Create a new Railway project and service from this repo.
-2. In Railway, set the service variable `OPENAI_API_KEY`.
-3. Copy the service ID from Railway.
-4. In GitHub, add these repository secrets:
-   - `RAILWAY_TOKEN` — Railway project token for this service/environment
-   - `RAILWAY_SERVICE_ID` — target Railway service ID
-5. Push to `main` or run the workflow manually from the Actions tab.
-
-### Local container test
+## Docker
 
 ```bash
-docker build -t live-ai-video-tutor .
-docker run --rm -p 8000:8000 -e OPENAI_API_KEY=your_key_here live-ai-video-tutor
+docker build -t ai-tutor .
+docker run --rm -p 8000:8000 -e OPENAI_API_KEY=your_key_here ai-tutor
 ```
 
 Then open `http://localhost:8000`.
+
+## Railway deployment
+
+This repo includes:
+
+- `Dockerfile`
+- `railway.json`
+- `.github/workflows/railway-deploy.yml` if you add or keep the workflow in your repo
+
+Minimum Railway setup:
+
+1. Create a Railway service from this repo.
+2. Set `OPENAI_API_KEY` in Railway.
+3. Deploy.
+
+The service health check is `/api/health`.
 
 ## API
 
@@ -96,10 +160,16 @@ Request body:
 }
 ```
 
-Response: proxied OpenAI Realtime session payload plus the server's `session_config`.
+Response:
 
-## Notes
+- OpenAI Realtime session payload
+- appended `session_config` object showing the server-side session settings
 
-- Keep the FastAPI server out of the hot audio path.
-- The tutor relies on OpenAI Realtime conversation state; no custom summarization is added.
-- Latency metrics are inferred from event timings, matching the spec.
+## Documentation map
+
+- `docs/decisions.md` — why the current architecture looks the way it does
+- `docs/latency-optimization.md` — how latency is minimized and measured
+- `docs/limitations.md` — current constraints and known gaps
+- `docs/transcript-template.md` — manual template for evaluating a demo session
+- `plan.md` — implementation status and next steps
+- `spec.md` — current product and architecture snapshot

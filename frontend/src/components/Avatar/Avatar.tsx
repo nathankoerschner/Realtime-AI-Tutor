@@ -5,6 +5,7 @@ type AvatarProps = {
   viseme: VisemeKey;
   speaking: boolean;
   connected: boolean;
+  connecting?: boolean;
 };
 
 // Anime-style mouths — small, expressive, centered lower on face
@@ -31,7 +32,7 @@ const mouths: Record<VisemeKey, string> = {
   etc: 'M 108 139 C 112 147 117 150 120 150 C 123 150 128 147 132 139 C 126 142 120 143 120 143 C 120 143 114 142 108 139',
 };
 
-export function Avatar({ viseme, speaking, connected }: AvatarProps) {
+export function Avatar({ viseme, speaking, connected, connecting }: AvatarProps) {
   const [blinking, setBlinking] = useState(false);
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export function Avatar({ viseme, speaking, connected }: AvatarProps) {
   }, []);
 
   return (
-    <div className={`avatar-shell ${speaking ? 'speaking' : ''} ${connected ? 'connected' : ''}`}>
+    <div className={`avatar-shell ${speaking ? 'speaking' : ''} ${connected ? 'connected' : ''} ${connecting ? 'connecting' : ''}`}>
       <svg viewBox="-40 -40 320 320" className="avatar-svg" aria-label="Tutor avatar">
         <defs>
           {/* Glowing orb gradient using Live+AI brand colors */}
@@ -112,7 +113,6 @@ export function Avatar({ viseme, speaking, connected }: AvatarProps) {
           strokeLinejoin="round"
         />
       </svg>
-      <div className="avatar-status">{connected ? (speaking ? 'Speaking' : 'Listening') : 'Ready to connect'}</div>
     </div>
   );
 }

@@ -21,7 +21,7 @@ export function Overlay({ visible, connectionState, latest, history, onExport }:
     <aside className="overlay">
       <div className="overlay-header">
         <strong>Developer Overlay</strong>
-        <button onClick={onExport}>Export JSON</button>
+        <button onClick={onExport} aria-label="Export latency metrics as JSON">Export JSON</button>
       </div>
       <div className="overlay-grid">
         <div>State</div>

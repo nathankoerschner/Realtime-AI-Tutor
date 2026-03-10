@@ -1,25 +1,51 @@
-# Annotated Demo Transcript Template
+# Demo Transcript Template
+
+Use this template to manually review a tutoring session recorded from the current app.
+
+## Session metadata
 
 - Topic:
 - Student level:
-- Concepts covered (1-3):
-- Why the interaction is Socratic:
+- Concepts covered:
+- Session date:
+- Voice or typed turns used:
+
+## Why this session is effective
+
+- Socratic behavior observed:
+- Evidence of scaffolding:
+- Evidence of warmth/encouragement:
+- Grade-level fit:
 
 ## Turn log
 
-1. **Student:**
+1. **Student**
+   - Input:
    - Note:
-2. **Tutor:**
+2. **Tutor**
+   - Response summary:
    - Guiding question used:
-   - Scaffolding note:
-3. **Student:**
+   - Coaching or hint given:
+3. **Student**
+   - Input:
    - Note:
-4. **Tutor:**
-   - Deeper follow-up or correction strategy:
+4. **Tutor**
+   - Response summary:
+   - Follow-up strategy:
 
-## Assessment
+_Add more turns as needed._
+
+## Metrics notes
+
+- First-frame latency impression:
+- Full-response latency impression:
+- Any lip-sync issues observed:
+- Overlay export attached: yes/no
+
+## Overall assessment
 
 - Accuracy:
-- Grade-level fit:
-- Warmth/encouragement:
-- Latency observations:
+- Educational helpfulness:
+- Conversation naturalness:
+- Major strengths:
+- Main issues to fix:
