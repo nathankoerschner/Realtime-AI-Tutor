@@ -177,6 +177,7 @@ h1 {
 .avatar-shell {
   justify-self: center;
   width: min(100%, 520px);
+  scale: 2;
   padding: 1rem;
   border-radius: 28px;
   background: transparent;

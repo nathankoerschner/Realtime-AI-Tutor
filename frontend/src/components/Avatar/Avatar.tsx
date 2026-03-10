@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import type { VisemeKey } from '../../lib/audio';
 
 type AvatarProps = {
@@ -138,6 +138,7 @@ const CloudBody = memo(function CloudBody() {
 
 export function Avatar({ viseme, speaking, connected, connecting }: AvatarProps) {
   const [blinking, setBlinking] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const scheduleBlink = () => {
@@ -152,7 +153,68 @@ export function Avatar({ viseme, speaking, connected, connecting }: AvatarProps)
     return () => clearTimeout(timerId);
   }, []);
 
+  // Mouse evasion — avatar gently drifts away from the cursor
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    let rafId: number;
+    let currentX = 0;
+    let currentY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const shell = wrapper.firstElementChild as HTMLElement | null;
+      if (!shell) return;
+      const rect = shell.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2 - currentX; // home center
+      const cy = rect.top + rect.height / 2 - currentY;
+      const dx = cx - e.clientX;
+      const dy = cy - e.clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const threshold = 320;
+      if (dist < threshold && dist > 0) {
+        const strength = Math.pow(1 - dist / threshold, 2) * 35;
+        const angle = Math.atan2(dy, dx);
+        targetX = Math.cos(angle) * strength;
+        targetY = Math.sin(angle) * strength;
+      } else {
+        targetX = 0;
+        targetY = 0;
+      }
+    };
+
+    const handleMouseLeave = () => {
+      targetX = 0;
+      targetY = 0;
+    };
+
+    // Smooth interpolation loop
+    const tick = () => {
+      const lerp = 0.08;
+      currentX += (targetX - currentX) * lerp;
+      currentY += (targetY - currentY) * lerp;
+      // Snap to zero when close enough
+      if (Math.abs(currentX) < 0.1 && Math.abs(currentY) < 0.1 && targetX === 0 && targetY === 0) {
+        currentX = 0;
+        currentY = 0;
+      }
+      wrapper.style.transform = `translate(${currentX}px, ${currentY}px)`;
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
+
   return (
+    <div ref={wrapperRef}>
     <div className={`avatar-shell ${speaking ? 'speaking' : ''} ${connected ? 'connected' : ''} ${connecting ? 'connecting' : ''}`}>
       <svg viewBox="-80 -80 400 400" className="avatar-svg" aria-label="Tutor avatar">
         <CloudBody />
@@ -195,6 +257,7 @@ export function Avatar({ viseme, speaking, connected, connecting }: AvatarProps)
           />
         </g>
       </svg>
+    </div>
     </div>
   );
 }
