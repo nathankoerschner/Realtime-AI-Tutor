@@ -3,8 +3,6 @@ type SessionControlsProps = {
   muted: boolean;
   onStop: () => void;
   onToggleMute: () => void;
-  overlayVisible: boolean;
-  onToggleOverlay: () => void;
   keyboardOpen: boolean;
   onToggleKeyboard: () => void;
 };
@@ -41,8 +39,6 @@ export function SessionControls({
   muted,
   onStop,
   onToggleMute,
-  overlayVisible,
-  onToggleOverlay,
   keyboardOpen,
   onToggleKeyboard,
 }: SessionControlsProps) {
@@ -58,9 +54,6 @@ export function SessionControls({
         aria-label={muted ? 'Unmute microphone (press M)' : 'Mute microphone (press M)'}
       >
         {muted ? 'Unmute mic' : 'Mute mic'}
-      </button>
-      <button onClick={onToggleOverlay} className="secondary">
-        {overlayVisible ? 'Hide metrics' : 'Show metrics'}
       </button>
       <button
         onClick={onToggleKeyboard}

@@ -156,6 +156,7 @@ export function Avatar({ viseme, speaking, connected, connecting }: AvatarProps)
   // Mouse evasion — avatar gently drifts away from the cursor
   useEffect(() => {
     const wrapper = wrapperRef.current;
+    /* v8 ignore next -- React sets the ref before this client effect runs */
     if (!wrapper) return;
     let rafId: number;
     let currentX = 0;

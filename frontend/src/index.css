@@ -55,12 +55,6 @@ button:disabled {
   overflow: hidden;
 }
 
-.overlay {
-  background: rgba(14, 12, 27, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(18px);
-}
 
 .hero-panel {
   display: flex;
@@ -135,10 +129,6 @@ h1 {
   background-clip: text;
 }
 
-.subtle {
-  color: #d6c6ff;
-}
-
 /* ── Start screen (idle) ── */
 .app-header-centered {
   justify-self: center;
@@ -205,15 +195,25 @@ h1 {
   display: block;
 }
 
-.avatar-status {
-  text-align: center;
-  color: #e8deff;
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-top: 0.25rem;
+
+.lesson-topic-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  width: 100%;
+  position: absolute;
+  bottom: 5.5rem;
+  left: 0;
+  right: 0;
+  padding: 0 1.5rem;
 }
 
-
+.lesson-topic-button {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.1);
+}
 
 .session-controls {
   display: flex;
@@ -330,53 +330,6 @@ button.muted-active {
   color: #ffb0b0;
 }
 
-.overlay {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  width: min(360px, calc(100vw - 2rem));
-  border-radius: 20px;
-  padding: 1rem;
-  z-index: 10;
-}
-
-.overlay-header,
-.overlay-history-header,
-.overlay-history li {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 1rem;
-  align-items: center;
-}
-
-.overlay-header {
-  grid-template-columns: minmax(0, 1fr) auto;
-}
-
-.overlay-grid {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.4rem 0.8rem;
-  margin-top: 1rem;
-  font-size: 0.92rem;
-}
-
-.overlay-history-header {
-  margin-top: 0.75rem;
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.overlay-history ul {
-  list-style: none;
-  padding: 0;
-  margin: 0.35rem 0 0;
-  display: grid;
-  gap: 0.35rem;
-}
-
 @keyframes drift {
   0%,
   100% {
@@ -390,12 +343,6 @@ button.muted-active {
 @media (max-width: 860px) {
   .hero-panel {
     grid-template-columns: 1fr;
-  }
-
-  .overlay {
-    position: static;
-    width: 100%;
-    margin-bottom: 1rem;
   }
 
   .session-controls {

@@ -1,25 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Avatar } from './components/Avatar/Avatar';
-import { Overlay } from './components/Overlay/Overlay';
 import { SessionControls } from './components/SessionControls/SessionControls';
 import { TextInput } from './components/TextInput/TextInput';
 import { StreamingVisemeEngine, type AudioAnalysisSnapshot, type VisemeKey } from './lib/audio';
-import { MetricsTracker, type DerivedMetrics } from './lib/metrics';
 import { RealtimeClient, type RealtimeEvent, type SessionBootstrap } from './lib/realtime';
+
+const lessonTopics = ['linear equations', 'clauses', 'molecular structure'] as const;
 
 export default function App() {
   const realtimeRef = useRef(new RealtimeClient());
-  const metricsRef = useRef(new MetricsTracker());
   const visemeEngineRef = useRef(new StreamingVisemeEngine());
   const textInputRef = useRef<HTMLInputElement>(null);
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [connectionState, setConnectionState] = useState('idle');
-  const [overlayVisible, setOverlayVisible] = useState(false);
   const [viseme, setViseme] = useState<VisemeKey>('rest');
   const [speaking, setSpeaking] = useState(false);
-  const [latestMetrics, setLatestMetrics] = useState<DerivedMetrics | null>(null);
-  const [history, setHistory] = useState<DerivedMetrics[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -36,14 +32,9 @@ export default function App() {
     };
   }, []);
 
-  // Keyboard shortcut: Ctrl+Shift+D to toggle overlay, M to toggle mute (when not typing)
+  // Keyboard shortcut: M to toggle mute when not typing
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-        e.preventDefault();
-        setOverlayVisible((v) => !v);
-      }
-      // 'M' to toggle mute only when not focused on an input/textarea
       if (e.key === 'm' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName) && connectionState === 'connected') {
         e.preventDefault();
         toggleMute();
@@ -91,10 +82,7 @@ export default function App() {
   }
 
   async function handleRemoteAudio(_audio: HTMLAudioElement, stream: MediaStream) {
-    await visemeEngineRef.current.attachToMediaStream(stream, handleAudioSnapshot, (at) => {
-      metricsRef.current.markFirstAvatar(at);
-      syncMetrics();
-    });
+    await visemeEngineRef.current.attachToMediaStream(stream, handleAudioSnapshot, () => {});
   }
 
   function handleAudioSnapshot(snapshot: AudioAnalysisSnapshot) {
@@ -102,31 +90,10 @@ export default function App() {
     setSpeaking(snapshot.speaking);
   }
 
-  function syncMetrics() {
-    setLatestMetrics(metricsRef.current.latest());
-    setHistory(metricsRef.current.getHistory());
-  }
-
   function handleRealtimeEvent(event: RealtimeEvent) {
     switch (event.type) {
       case 'input_audio_buffer.speech_stopped':
         visemeEngineRef.current.resetSpeechFrameFlag();
-        metricsRef.current.markSpeechStopped();
-        syncMetrics();
-        break;
-      case 'response.text.delta': {
-        metricsRef.current.markFirstTextDelta();
-        syncMetrics();
-        break;
-      }
-      case 'response.audio.delta':
-        metricsRef.current.markFirstAudioDelta();
-        syncMetrics();
-        break;
-      case 'response.done':
-      case 'response.output_audio.done':
-        metricsRef.current.completeTurn();
-        syncMetrics();
         break;
       case 'error':
         showError(typeof event.error === 'object' ? JSON.stringify(event.error) : 'Realtime error');
@@ -139,8 +106,6 @@ export default function App() {
   async function sendText(text: string) {
     try {
       visemeEngineRef.current.resetSpeechFrameFlag();
-      metricsRef.current.beginTurn();
-      syncMetrics();
       realtimeRef.current.sendTextMessage(text);
     } catch (sendError) {
       showError(sendError instanceof Error ? sendError.message : 'Unable to send message');
@@ -155,26 +120,8 @@ export default function App() {
     });
   }
 
-  function exportMetrics() {
-    const blob = new Blob([JSON.stringify(metricsRef.current.export(), null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `latency-report-${new Date().toISOString()}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  }
-
   return (
     <main className="app-shell">
-      <Overlay
-        visible={overlayVisible}
-        connectionState={connectionState}
-        latest={latestMetrics}
-        history={history}
-        onExport={exportMetrics}
-      />
-
       {/* Error toast */}
       {error && (
         <div className="error-toast" role="alert">
@@ -200,13 +147,26 @@ export default function App() {
               connected={connectionState === 'connected'}
               connecting={connectionState === 'connecting'}
             />
+            {!keyboardOpen && (
+              <div className="lesson-topic-bar" aria-label="Suggested lesson topics">
+                {lessonTopics.map((topic) => (
+                  <button
+                    key={topic}
+                    type="button"
+                    className="secondary lesson-topic-button"
+                    disabled={connectionState !== 'connected'}
+                    onClick={() => sendText(`Can you teach me about ${topic}?`)}
+                  >
+                    Learn about {topic}
+                  </button>
+                ))}
+              </div>
+            )}
             <SessionControls
               state={connectionState}
               muted={muted}
               onStop={stopSession}
               onToggleMute={toggleMute}
-              overlayVisible={overlayVisible}
-              onToggleOverlay={() => setOverlayVisible((current) => !current)}
               keyboardOpen={keyboardOpen}
               onToggleKeyboard={() => {
                 setKeyboardOpen((v) => {

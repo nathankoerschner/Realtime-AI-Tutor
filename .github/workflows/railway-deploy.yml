@@ -28,16 +28,32 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      - name: Run frontend tests with coverage
+        working-directory: frontend
+        run: npm run test:run
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      - name: Install uv package manager
+        run: pip install uv
+
       - name: Install backend dependencies
-        run: pip install -r backend/requirements.txt
+        run: |
+          cd backend
+          uv sync --extra dev
+
+      - name: Run backend tests
+        run: |
+          cd backend
+          PYTHONPATH=. uv run pytest
 
       - name: Smoke test backend import
-        run: PYTHONPATH=backend python -c "from app.main import app; print(app.title)"
+        run: |
+          cd backend
+          PYTHONPATH=. python -c "from app.main import app; print(app.title)"
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli

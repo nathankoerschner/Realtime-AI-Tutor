@@ -8,6 +8,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import APP_ENV, FRONTEND_DIST, OPENAI_REALTIME_MODEL
+from app.routes.evals import router as evals_router
 from app.routes.realtime import router as realtime_router
 
 app = FastAPI(title="Live AI Video Tutor", version="0.1.0")
@@ -18,6 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(realtime_router)
+app.include_router(evals_router)
 
 
 @app.get("/api/health")
