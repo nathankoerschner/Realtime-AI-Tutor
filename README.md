@@ -55,6 +55,34 @@ cd ../backend && uv sync && uv run uvicorn app.main:app --host 0.0.0.0 --port 80
 
 FastAPI serves `frontend/dist` when it exists.
 
+## Railway deployment with GitHub Actions
+
+### Files added
+
+- `Dockerfile` — builds the React frontend and runs the FastAPI app
+- `railway.json` — tells Railway to use the Dockerfile and health check `/api/health`
+- `.github/workflows/railway-deploy.yml` — builds the app on every push to `main` and deploys with the Railway CLI
+- `backend/requirements.txt` — lightweight backend dependency list for CI and Docker
+
+### One-time Railway setup
+
+1. Create a new Railway project and service from this repo.
+2. In Railway, set the service variable `OPENAI_API_KEY`.
+3. Copy the service ID from Railway.
+4. In GitHub, add these repository secrets:
+   - `RAILWAY_TOKEN` — Railway API token
+   - `RAILWAY_SERVICE_ID` — target Railway service ID
+5. Push to `main` or run the workflow manually from the Actions tab.
+
+### Local container test
+
+```bash
+docker build -t live-ai-video-tutor .
+docker run --rm -p 8000:8000 -e OPENAI_API_KEY=your_key_here live-ai-video-tutor
+```
+
+Then open `http://localhost:8000`.
+
 ## API
 
 ### `POST /api/realtime/session`
