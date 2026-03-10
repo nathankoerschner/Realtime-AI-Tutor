@@ -222,6 +222,11 @@ h1 {
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
+  position: absolute;
+  bottom: 1.5rem;
+  left: 0;
+  right: 0;
+  padding: 0 1.5rem;
 }
 
 .session-controls button.keyboard-active {
@@ -249,8 +254,13 @@ h1 {
 }
 
 .text-input {
-  margin-top: 1rem;
+  margin-top: 0;
   align-items: center;
+  position: absolute;
+  bottom: 5rem;
+  left: 0;
+  right: 0;
+  padding: 0 1.5rem;
 }
 
 .text-input input {
