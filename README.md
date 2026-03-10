@@ -70,7 +70,7 @@ FastAPI serves `frontend/dist` when it exists.
 2. In Railway, set the service variable `OPENAI_API_KEY`.
 3. Copy the service ID from Railway.
 4. In GitHub, add these repository secrets:
-   - `RAILWAY_TOKEN` — Railway API token
+   - `RAILWAY_TOKEN` — Railway project token for this service/environment
    - `RAILWAY_SERVICE_ID` — target Railway service ID
 5. Push to `main` or run the workflow manually from the Actions tab.
 
