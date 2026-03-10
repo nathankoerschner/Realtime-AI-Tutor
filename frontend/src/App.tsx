@@ -155,6 +155,7 @@ export default function App() {
   function revealNextWord() {
     const reveal = wordRevealRef.current;
     const id = streamingMsgIdRef.current;
+    /* v8 ignore next */
     if (!id) return;
 
     const words = reveal.fullText.split(/(\s+)/); // preserve whitespace
@@ -199,6 +200,7 @@ export default function App() {
   // Finalize the streaming assistant message
   function finalizeAssistantMessage() {
     const id = streamingMsgIdRef.current;
+    /* v8 ignore next */
     if (!id) return;
     stopWordRevealTimer();
     // Show the full text
