@@ -167,9 +167,6 @@ export default function App() {
       return;
     }
 
-    // Don't reveal words while still waiting for the user's transcription
-    if (pendingUserMsgIdRef.current) return;
-
     // Only advance when the AI is actually speaking audio
     if (!speakingRef.current && !reveal.done) return;
 
@@ -274,6 +271,16 @@ export default function App() {
   function handleRealtimeEvent(event: RealtimeEvent) {
     const evaluator = evalCollectorRef.current;
 
+    // Debug: log all events to trace ordering issues
+    if (event.type.includes('speech') || event.type.includes('transcription') || event.type.includes('response.audio_transcript') || event.type.includes('response.done')) {
+      console.debug(`[tutor event] ${event.type}`, {
+        pendingUser: pendingUserMsgIdRef.current,
+        streamingAssistant: streamingMsgIdRef.current,
+        transcript: (event as any).transcript,
+        delta: (event as any).delta?.substring(0, 30),
+      });
+    }
+
     switch (event.type) {
       case 'input_audio_buffer.speech_started':
         evaluator.markSpeechStart();
@@ -295,6 +302,12 @@ export default function App() {
           // Empty transcription — remove the placeholder
           removePendingUserMessage();
         }
+        break;
+      }
+      case 'conversation.item.input_audio_transcription.failed': {
+        // Whisper transcription failed — replace placeholder with fallback text
+        console.warn('[tutor] Input audio transcription failed', event);
+        resolvePendingUserMessage('[could not transcribe]');
         break;
       }
       case 'response.audio_transcript.delta': {
