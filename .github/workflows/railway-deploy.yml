@@ -53,7 +53,7 @@ jobs:
       - name: Smoke test backend import
         run: |
           cd backend
-          PYTHONPATH=. python -c "from app.main import app; print(app.title)"
+          PYTHONPATH=. uv run python -c "from app.main import app; print(app.title)"
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli
