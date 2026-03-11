@@ -1639,3 +1639,6 @@
 {"timestamp": "2026-03-11T17:59:57.283986+00:00", "source": "frontend", "eval_run_id": "eval_1773251559027_pzi03hi9", "name": "tutor_response_end", "at_ms": 426553.3, "meta": {}}
 {"timestamp": "2026-03-11T17:59:57.284043+00:00", "source": "frontend", "eval_run_id": "eval_1773251559027_pzi03hi9", "name": "session_end", "at_ms": 438236.7, "meta": {}}
 {"timestamp": "2026-03-11T17:59:57.284099+00:00", "source": "frontend", "eval_run_id": "eval_1773251559027_pzi03hi9", "name": "session_total_duration", "at_ms": 438236.7, "meta": {"duration_ms": 107420}}
+{"timestamp": "2026-03-11T18:08:07.495121+00:00", "source": "test", "eval_run_id": "test_run_123", "name": "test_event", "at_ms": 123.45, "meta": {"test": true}}
+{"timestamp": "2026-03-11T18:08:07.495450+00:00", "source": "test", "eval_run_id": null, "name": "another_event", "at_ms": 456.78, "meta": {}}
+{"timestamp": "2026-03-11T18:08:07.497769+00:00", "source": "frontend", "eval_run_id": null, "name": "minimal_event", "at_ms": null, "meta": {}}

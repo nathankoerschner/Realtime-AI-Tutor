@@ -89,3 +89,4 @@
 {"timestamp": "2026-03-11T17:54:50.523827+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": false, "duration_ms": 10997.16, "topic_hint": null, "student_level": "grades 6-12", "error": "Couldn't connect to the realtime tutor after 3 attempts. Please try again. Last transport error: "}
 {"timestamp": "2026-03-11T17:55:25.060034+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 276.29, "topic_hint": null, "student_level": "grades 6-12"}
 {"timestamp": "2026-03-11T17:58:10.169385+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 312.85, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-11T18:00:36.243825+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 9709.65, "topic_hint": null, "student_level": "grades 6-12"}
