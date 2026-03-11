@@ -591,6 +591,110 @@ describe('App', () => {
     vi.useRealTimers();
   });
 
+  it('keeps a typed interruption ahead of the next tutor response', async () => {
+    vi.useFakeTimers();
+
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
+
+    let eventHandler: (event: any) => void;
+    let audioSnapshotHandler: (snapshot: any) => void;
+    mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any, onRemoteAudio: any) => {
+      eventHandler = onEvent;
+      mockAttachToMediaStream.mockImplementation(async (_stream: any, onSnapshot: any) => {
+        audioSnapshotHandler = onSnapshot;
+      });
+      await onRemoteAudio({} as HTMLAudioElement, {} as MediaStream);
+    });
+
+    const { container } = render(<App />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    });
+
+    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Original answer' }));
+    act(() => vi.advanceTimersByTime(150));
+
+    const chatInput = screen.getByPlaceholderText('Type a message…');
+    act(() => {
+      fireEvent.change(chatInput, { target: { value: 'Typed interruption' } });
+      fireEvent.submit(chatInput.closest('form')!);
+    });
+
+    expect(mockSendTextMessage).toHaveBeenCalledWith('Typed interruption');
+
+    // The prior interrupted response may still emit cleanup events, then the tutor replies again.
+    act(() => eventHandler({ type: 'response.audio_transcript.done' }));
+    act(() => eventHandler({ type: 'response.done' }));
+    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 2 }));
+    act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Follow up answer' }));
+    act(() => eventHandler({ type: 'response.audio_transcript.done' }));
+    act(() => vi.advanceTimersByTime(150 * 10));
+
+    const bubbleTexts = Array.from(container.querySelectorAll('.chat-bubble-text')).map((node) => node.textContent);
+    expect(bubbleTexts).toContain('Typed interruption');
+    expect(bubbleTexts).toContain('Follow up answer');
+    expect(bubbleTexts.indexOf('Typed interruption')).toBeLessThan(bubbleTexts.indexOf('Follow up answer'));
+
+    vi.useRealTimers();
+  });
+
+  it('keeps a typed interruption ahead when the next tutor response starts in the same tick', async () => {
+    vi.useFakeTimers();
+
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
+
+    let eventHandler: (event: any) => void;
+    let audioSnapshotHandler: (snapshot: any) => void;
+    mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any, onRemoteAudio: any) => {
+      eventHandler = onEvent;
+      mockAttachToMediaStream.mockImplementation(async (_stream: any, onSnapshot: any) => {
+        audioSnapshotHandler = onSnapshot;
+      });
+      await onRemoteAudio({} as HTMLAudioElement, {} as MediaStream);
+    });
+
+    mockSendTextMessage.mockImplementation((text: string) => {
+      expect(text).toBe('Typed interruption');
+      // Simulate the backend starting the next response immediately, before the
+      // submit handler has fully unwound.
+      audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 2 });
+      eventHandler({ type: 'response.audio_transcript.delta', delta: 'Immediate follow up' });
+      eventHandler({ type: 'response.audio_transcript.done' });
+    });
+
+    const { container } = render(<App />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    });
+
+    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Original answer' }));
+    act(() => vi.advanceTimersByTime(150));
+
+    const chatInput = screen.getByPlaceholderText('Type a message…');
+    act(() => {
+      fireEvent.change(chatInput, { target: { value: 'Typed interruption' } });
+      fireEvent.submit(chatInput.closest('form')!);
+      eventHandler({ type: 'response.done' });
+    });
+
+    act(() => vi.advanceTimersByTime(150 * 10));
+
+    const bubbleTexts = Array.from(container.querySelectorAll('.chat-bubble-text')).map((node) => node.textContent);
+    expect(bubbleTexts).toContain('Typed interruption');
+    expect(bubbleTexts).toContain('Immediate follow up');
+    expect(bubbleTexts.indexOf('Typed interruption')).toBeLessThan(bubbleTexts.indexOf('Immediate follow up'));
+
+    vi.useRealTimers();
+  });
+
   it('handles response.done when no streaming message is active', async () => {
     vi.mocked(fetch).mockResolvedValue({
       ok: true,

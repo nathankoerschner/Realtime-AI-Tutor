@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Avatar } from './components/Avatar/Avatar';
 import { SessionControls } from './components/SessionControls/SessionControls';
 import { ChatPanel, type ChatMessage } from './components/ChatPanel/ChatPanel';
@@ -95,14 +96,21 @@ export default function App() {
   }, []);
 
   // Add a user message to chat (used for typed messages)
-  function addUserMessage(text: string) {
+  function addUserMessage(text: string, options?: { flush?: boolean }) {
     const msg: ChatMessage = {
       id: nextMessageId(),
       role: 'user',
       text,
       timestamp: Date.now(),
     };
-    setMessages((prev) => [...prev, msg]);
+
+    const appendMessage = () => setMessages((prev) => [...prev, msg]);
+    if (options?.flush) {
+      flushSync(appendMessage);
+      return;
+    }
+
+    appendMessage();
   }
 
   // Create a placeholder user message when speech is detected
@@ -374,6 +382,14 @@ export default function App() {
   }
 
   function handleAudioSnapshot(snapshot: AudioAnalysisSnapshot) {
+    // If we just interrupted an assistant turn and then receive a fresh remote
+    // speaking frame before any new transcript has been attached, treat that as
+    // the next tutor response starting. This lets an immediate follow-up reply
+    // begin in the same tick without being swallowed by the interruption guard.
+    if (snapshot.speaking && interruptedAssistantRef.current && !streamingMsgIdRef.current) {
+      interruptedAssistantRef.current = false;
+    }
+
     setViseme(snapshot.viseme);
     setSpeaking(snapshot.speaking);
     speakingRef.current = snapshot.speaking;
@@ -497,7 +513,14 @@ export default function App() {
 
   async function sendText(text: string) {
     try {
-      addUserMessage(text);
+      if (streamingMsgIdRef.current) {
+        interruptAssistantMessage();
+      }
+
+      // Flush the typed user turn into the DOM before the next streamed tutor
+      // response can start, so ordering stays stable even when the backend
+      // replies immediately.
+      addUserMessage(text, { flush: true });
       visemeEngineRef.current.resetSpeechFrameFlag();
       realtimeRef.current.sendTextMessage(text);
     } catch (sendError) {
