@@ -74,16 +74,66 @@ jobs:
         run: |
           set -euo pipefail
 
+          latest_deployment_id() {
+            railway deployment list --limit 10 --json | python3 -c 'import json,sys; data=json.load(sys.stdin); print(data[0]["id"] if data else "")'
+          }
+
+          deployment_status() {
+            target_id="$1"
+            railway deployment list --limit 20 --json | python3 -c 'import json,sys; needle=sys.argv[1]; data=json.load(sys.stdin); print(next((item["status"] for item in data if item["id"] == needle), ""))' "$target_id"
+          }
+
+          baseline_deployment_id="$(latest_deployment_id)"
+          echo "Latest deployment before upload: ${baseline_deployment_id:-<none>}"
+
           for attempt in 1 2 3 4 5; do
             echo "Railway deploy attempt ${attempt}/5"
 
-            if railway up --service="$RAILWAY_SERVICE_ID" --detach --ci --verbose; then
-              exit 0
+            set +e
+            railway up --service="$RAILWAY_SERVICE_ID" --detach --ci --verbose
+            up_exit_code=$?
+            set -e
+
+            echo "railway up exit code: $up_exit_code"
+
+            new_deployment_id=""
+            for poll in $(seq 1 18); do
+              current_deployment_id="$(latest_deployment_id)"
+              if [ -n "$current_deployment_id" ] && [ "$current_deployment_id" != "$baseline_deployment_id" ]; then
+                new_deployment_id="$current_deployment_id"
+                break
+              fi
+              echo "Waiting for Railway to register a new deployment... (${poll}/18)"
+              sleep 10
+            done
+
+            if [ -z "$new_deployment_id" ]; then
+              echo "No new deployment appeared after attempt ${attempt}."
+            else
+              echo "Tracking deployment ${new_deployment_id}"
+
+              for poll in $(seq 1 30); do
+                status="$(deployment_status "$new_deployment_id")"
+                echo "Deployment ${new_deployment_id} status: ${status:-unknown} (${poll}/30)"
+
+                case "$status" in
+                  SUCCESS)
+                    exit 0
+                    ;;
+                  FAILED|CRASHED|REMOVED)
+                    break
+                    ;;
+                esac
+
+                sleep 10
+              done
+
+              baseline_deployment_id="$new_deployment_id"
             fi
 
             if [ "$attempt" -lt 5 ]; then
               sleep_seconds=$((attempt * 20))
-              echo "Railway deploy failed, retrying in ${sleep_seconds}s..."
+              echo "Railway deploy did not complete successfully, retrying in ${sleep_seconds}s..."
               sleep "$sleep_seconds"
             fi
           done
