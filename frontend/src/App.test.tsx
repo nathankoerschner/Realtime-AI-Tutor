@@ -10,8 +10,8 @@ const mockDispose = vi.fn();
 const mockResetSpeechFrameFlag = vi.fn();
 
 vi.mock('./components/Avatar/Avatar', () => ({
-  Avatar: ({ speaking, connected }: Record<string, unknown>) => (
-    <div data-testid="avatar">{JSON.stringify({ speaking, connected })}</div>
+  Avatar: ({ viseme, speaking, connected }: Record<string, unknown>) => (
+    <div data-testid="avatar">{JSON.stringify({ viseme, speaking, connected })}</div>
   ),
 }));
 
@@ -35,7 +35,7 @@ vi.mock('./lib/realtime', () => ({
 }));
 
 vi.mock('./lib/audio', () => ({
-  StreamingAudioEngine: class {
+  StreamingVisemeEngine: class {
     attachToMediaStream = mockAttachToMediaStream;
     dispose = mockDispose;
     resetSpeechFrameFlag = mockResetSpeechFrameFlag;

@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom';
 import { Avatar } from './components/Avatar/Avatar';
 import { SessionControls } from './components/SessionControls/SessionControls';
 import { ChatPanel, type ChatMessage } from './components/ChatPanel/ChatPanel';
-import { StreamingAudioEngine, type AudioAnalysisSnapshot } from './lib/audio';
+import { StreamingVisemeEngine, type AudioAnalysisSnapshot, type VisemeKey } from './lib/audio';
 import { RealtimeClient, type RealtimeEvent, type SessionBootstrap } from './lib/realtime';
 import { EvalCollector } from './lib/evals';
 
@@ -33,10 +33,11 @@ async function getErrorMessage(response: Response) {
 
 export default function App() {
   const realtimeRef = useRef(new RealtimeClient());
-  const audioEngineRef = useRef(new StreamingAudioEngine());
+  const visemeEngineRef = useRef(new StreamingVisemeEngine());
   const evalCollectorRef = useRef(new EvalCollector());
 
   const [connectionState, setConnectionState] = useState('idle');
+  const [viseme, setViseme] = useState<VisemeKey>('rest');
   const [speaking, setSpeaking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
@@ -69,7 +70,7 @@ export default function App() {
   useEffect(() => {
     return () => {
       realtimeRef.current.disconnect();
-      audioEngineRef.current.dispose();
+      visemeEngineRef.current.dispose();
       evalCollectorRef.current.flush();
       stopWordRevealTimer();
     };
@@ -357,9 +358,10 @@ export default function App() {
     evalCollectorRef.current.markSessionEnd();
 
     realtimeRef.current.disconnect();
-    audioEngineRef.current.dispose();
+    visemeEngineRef.current.dispose();
     setConnectionState('idle');
     setSpeaking(false);
+    setViseme('rest');
     streamingMsgIdRef.current = null;
     pendingUserMsgIdRef.current = null;
     interruptedAssistantRef.current = false;
@@ -376,7 +378,7 @@ export default function App() {
 
   async function handleRemoteAudio(_audio: HTMLAudioElement, stream: MediaStream) {
     evalCollectorRef.current.markFirstAudioFrame();
-    await audioEngineRef.current.attachToMediaStream(stream, handleAudioSnapshot, () => {});
+    await visemeEngineRef.current.attachToMediaStream(stream, handleAudioSnapshot, () => {});
   }
 
   function handleAudioSnapshot(snapshot: AudioAnalysisSnapshot) {
@@ -388,6 +390,7 @@ export default function App() {
       interruptedAssistantRef.current = false;
     }
 
+    setViseme(snapshot.viseme);
     setSpeaking(snapshot.speaking);
     speakingRef.current = snapshot.speaking;
   }
@@ -432,7 +435,7 @@ export default function App() {
           lastUserSpeechDurationMsRef.current = performance.now() - userSpeechStartedAtRef.current;
         }
         userSpeechStartedAtRef.current = null;
-        audioEngineRef.current.resetSpeechFrameFlag();
+        visemeEngineRef.current.resetSpeechFrameFlag();
         break;
       }
       case 'conversation.item.input_audio_transcription.completed': {
@@ -518,7 +521,7 @@ export default function App() {
       // response can start, so ordering stays stable even when the backend
       // replies immediately.
       addUserMessage(text, { flush: true });
-      audioEngineRef.current.resetSpeechFrameFlag();
+      visemeEngineRef.current.resetSpeechFrameFlag();
       realtimeRef.current.sendTextMessage(text);
     } catch (sendError) {
       showError(sendError instanceof Error ? sendError.message : 'Unable to send message');
@@ -567,6 +570,7 @@ export default function App() {
                 </div>
               ) : (
                 <Avatar
+                  viseme={viseme}
                   speaking={speaking}
                   connected={isConnected}
                 />

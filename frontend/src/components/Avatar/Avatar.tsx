@@ -1,12 +1,24 @@
 import { useState, useEffect, useRef, memo } from 'react';
+import type { VisemeKey } from '../../lib/audio';
 
 type AvatarProps = {
+  viseme: VisemeKey;
   speaking: boolean;
   connected: boolean;
 };
 
-const restingMouth = 'M 110 140 C 113 143 116 145 120 145 C 124 145 127 143 130 140';
-const speakingMouth = 'M 114 139 C 114 135 126 135 126 139 C 126 145 122 148 120 148 C 118 148 114 145 114 139';
+const mouths: Record<VisemeKey, string> = {
+  rest: 'M 110 140 C 113 143 116 145 120 145 C 124 145 127 143 130 140',
+  mbp: 'M 112 142 C 116 143 124 143 128 142',
+  ai: 'M 106 138 C 110 148 116 152 120 152 C 124 152 130 148 134 138 C 128 140 122 141 120 141 C 118 141 112 140 106 138',
+  e: 'M 108 140 C 114 145 120 146 120 146 C 120 146 126 145 132 140 C 126 143 120 144 120 144 C 120 144 114 143 108 140',
+  o: 'M 114 139 C 114 135 126 135 126 139 C 126 145 122 148 120 148 C 118 148 114 145 114 139',
+  u: 'M 115 140 C 115 137 125 137 125 140 C 125 144 122 146 120 146 C 118 146 115 144 115 140',
+  fv: 'M 109 140 C 113 144 118 146 120 146 C 122 146 127 144 131 140 L 109 140',
+  l: 'M 110 139 C 114 146 118 148 120 148 C 122 148 126 146 130 139',
+  wq: 'M 114 140 C 116 137 124 137 126 140 C 124 144 120 146 120 146 C 120 146 116 144 114 140',
+  etc: 'M 108 139 C 112 147 117 150 120 150 C 123 150 128 147 132 139 C 126 142 120 143 120 143 C 120 143 114 142 108 139',
+};
 
 // Memoized cloud body — never re-renders, so SVG <animate> timelines stay stable
 const CloudBody = memo(function CloudBody() {
@@ -138,7 +150,7 @@ const SimpleCloudBody = memo(function SimpleCloudBody() {
   );
 });
 
-export function Avatar({ speaking, connected }: AvatarProps) {
+export function Avatar({ viseme, speaking, connected }: AvatarProps) {
   const [blinking, setBlinking] = useState(false);
   const [useSimpleMobileBody, setUseSimpleMobileBody] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -267,8 +279,8 @@ export function Avatar({ speaking, connected }: AvatarProps) {
               </>
             )}
             <path
-              d={speaking ? speakingMouth : restingMouth}
-              fill={speaking ? '#5c1a2a' : 'none'}
+              d={mouths[viseme]}
+              fill={['ai', 'o', 'u', 'e', 'fv', 'l', 'wq', 'etc'].includes(viseme) ? '#5c1a2a' : 'none'}
               stroke="#3a1020"
               strokeWidth="3"
               strokeLinecap="round"

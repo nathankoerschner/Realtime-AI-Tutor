@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { StreamingAudioEngine } from './audio';
+import { StreamingVisemeEngine } from './audio';
 
-describe('StreamingAudioEngine', () => {
+describe('StreamingVisemeEngine', () => {
   it('attaches to a media stream, emits snapshots, and fires first-frame once per speech window', async () => {
     const disconnect = vi.fn();
     const close = vi.fn().mockResolvedValue(undefined);
@@ -43,8 +43,8 @@ describe('StreamingAudioEngine', () => {
       },
     );
 
-    const engine = new StreamingAudioEngine();
-    const snapshots: Array<{ speaking: boolean; level: number }> = [];
+    const engine = new StreamingVisemeEngine();
+    const snapshots: Array<{ speaking: boolean; level: number; viseme: string }> = [];
     const firstFrame = vi.fn();
 
     await engine.attachToMediaStream({} as MediaStream, (snapshot) => snapshots.push(snapshot), firstFrame);

@@ -1767,3 +1767,128 @@
 {"timestamp": "2026-03-11T20:02:16.476970+00:00", "source": "frontend", "eval_run_id": "eval_1773258719970_v07rfshg", "name": "tutor_response_end", "at_ms": 60572.7, "meta": {}}
 {"timestamp": "2026-03-11T20:02:16.477024+00:00", "source": "frontend", "eval_run_id": "eval_1773258719970_v07rfshg", "name": "session_end", "at_ms": 63296.2, "meta": {}}
 {"timestamp": "2026-03-11T20:02:16.477079+00:00", "source": "frontend", "eval_run_id": "eval_1773258719970_v07rfshg", "name": "session_total_duration", "at_ms": 63296.2, "meta": {"duration_ms": 62525.4}}
+{"timestamp": "2026-03-11T22:34:56.111970+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "session_start", "at_ms": 656.2, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112233+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "connection_attempt", "at_ms": 656.3, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112320+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "first_audio_frame", "at_ms": 2129.9, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112368+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "connection_duration", "at_ms": 5865.5, "meta": {"duration_ms": 5209.3}}
+{"timestamp": "2026-03-11T22:34:56.112408+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "connection_success", "at_ms": 5865.5, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112441+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 12140.7, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112477+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 14730.3, "meta": {"duration_ms": 2589.6}}
+{"timestamp": "2026-03-11T22:34:56.112507+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 14730.3, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112539+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 14920.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112568+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 14925.1, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112596+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 15785.9, "meta": {"duration_ms": 865.3}}
+{"timestamp": "2026-03-11T22:34:56.112624+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 15785.9, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112652+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_start", "at_ms": 16073.2, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112679+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 17223.3, "meta": {"ttff_ms": 1437.2, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.112709+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 17588.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112735+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 17998.5, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112761+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 18787.9, "meta": {"duration_ms": 789.4}}
+{"timestamp": "2026-03-11T22:34:56.112825+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 18787.9, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112852+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 18790.0, "meta": {"ttff_ms": 2.1, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.112878+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 19498.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112904+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 19523.9, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112933+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 20348.6, "meta": {"duration_ms": 850}}
+{"timestamp": "2026-03-11T22:34:56.112960+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 20348.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.112986+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 20356.8, "meta": {"ttff_ms": 8.1, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.113012+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 21530.8, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113037+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 26638.2, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113063+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 29947.8, "meta": {"duration_ms": 3309.6}}
+{"timestamp": "2026-03-11T22:34:56.113089+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 29947.8, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113118+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 30530.7, "meta": {"ttff_ms": 582.8, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.113145+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 31477.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113172+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 31477.7, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113200+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 32848.5, "meta": {"duration_ms": 1370.9}}
+{"timestamp": "2026-03-11T22:34:56.113227+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 32848.5, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113254+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 32891.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113280+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 32892.7, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113310+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 35180.8, "meta": {"duration_ms": 2289.8}}
+{"timestamp": "2026-03-11T22:34:56.113336+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 35180.8, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113367+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 35359.4, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113393+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 35369.4, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113418+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 36750.7, "meta": {"duration_ms": 1391.3}}
+{"timestamp": "2026-03-11T22:34:56.113446+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 36750.8, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113471+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 37456.7, "meta": {"ttff_ms": 705.8, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.113501+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 38814.5, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113528+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 38814.7, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113555+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 39471.0, "meta": {"duration_ms": 656.5}}
+{"timestamp": "2026-03-11T22:34:56.113581+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 39471.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113607+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 41276.2, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113632+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 43036.1, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113658+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 45140.6, "meta": {"duration_ms": 2104.5}}
+{"timestamp": "2026-03-11T22:34:56.113683+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 45140.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113708+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 45790.0, "meta": {"ttff_ms": 649.4, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.113734+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 47012.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113760+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 47752.3, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113785+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 48630.3, "meta": {"duration_ms": 878}}
+{"timestamp": "2026-03-11T22:34:56.113810+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 48630.4, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113837+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 49256.6, "meta": {"ttff_ms": 626.2, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.113862+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 49830.9, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113887+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 49831.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113911+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 52270.6, "meta": {"duration_ms": 2439.7}}
+{"timestamp": "2026-03-11T22:34:56.113936+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 52270.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113961+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 52657.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.113985+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 52677.4, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114009+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 53626.0, "meta": {"duration_ms": 969}}
+{"timestamp": "2026-03-11T22:34:56.114034+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 53626.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114059+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 53789.5, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114084+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 53796.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114109+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 56542.2, "meta": {"duration_ms": 2752.7}}
+{"timestamp": "2026-03-11T22:34:56.114134+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 56542.2, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114159+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 57215.0, "meta": {"ttff_ms": 672.8, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.114185+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 58126.5, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114209+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 58126.7, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114236+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 59130.7, "meta": {"duration_ms": 1004.2}}
+{"timestamp": "2026-03-11T22:34:56.114325+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 59130.7, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114351+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 59789.9, "meta": {"ttff_ms": 659.2, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.114376+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 61017.4, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114401+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 61168.9, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114428+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 61172.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114453+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 64089.4, "meta": {"duration_ms": 2920.5}}
+{"timestamp": "2026-03-11T22:34:56.114479+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 64089.4, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114504+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 64142.9, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114529+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 64147.3, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114553+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 67173.6, "meta": {"duration_ms": 3030.7}}
+{"timestamp": "2026-03-11T22:34:56.114579+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 67173.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114603+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 67873.4, "meta": {"ttff_ms": 699.7, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.114629+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 68703.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114654+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 68703.2, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114678+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 69471.5, "meta": {"duration_ms": 768.5}}
+{"timestamp": "2026-03-11T22:34:56.114702+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 69471.5, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114727+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 71325.7, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114752+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 77147.3, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114776+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 78383.6, "meta": {"duration_ms": 1236.3}}
+{"timestamp": "2026-03-11T22:34:56.114801+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 78383.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114826+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 79131.7, "meta": {"ttff_ms": 748.1, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.114850+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 82052.4, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114874+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 82074.5, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.114901+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 84989.6, "meta": {"duration_ms": 2937.2}}
+{"timestamp": "2026-03-11T22:34:56.114960+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 84989.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115008+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 85127.5, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115044+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 85133.8, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115075+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 86370.8, "meta": {"duration_ms": 1243.3}}
+{"timestamp": "2026-03-11T22:34:56.115105+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 86370.8, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115135+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 86867.2, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115162+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 86870.1, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115190+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 87343.6, "meta": {"duration_ms": 476.4}}
+{"timestamp": "2026-03-11T22:34:56.115217+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 87343.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115246+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 88156.8, "meta": {"ttff_ms": 813.2, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.115274+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 90197.4, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115301+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 92017.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115328+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 92895.3, "meta": {"duration_ms": 877.7}}
+{"timestamp": "2026-03-11T22:34:56.115355+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 92895.3, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115382+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 93073.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115408+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 93073.1, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115434+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 94035.6, "meta": {"duration_ms": 962.6}}
+{"timestamp": "2026-03-11T22:34:56.115461+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 94035.6, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115487+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 94814.1, "meta": {"ttff_ms": 778.5, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.115514+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 96594.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115540+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 98656.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115566+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 102780.0, "meta": {"duration_ms": 4124}}
+{"timestamp": "2026-03-11T22:34:56.115593+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 102780.0, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115620+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_start", "at_ms": 102828.4, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115645+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 102832.1, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115671+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_duration", "at_ms": 105741.1, "meta": {"duration_ms": 2912.7}}
+{"timestamp": "2026-03-11T22:34:56.115697+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "user_speech_end", "at_ms": 105741.1, "meta": {}}
+{"timestamp": "2026-03-11T22:34:56.115723+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "avatar_first_frame", "at_ms": 106956.7, "meta": {"ttff_ms": 1215.6, "source": "voice"}}
+{"timestamp": "2026-03-11T22:34:56.115749+00:00", "source": "frontend", "eval_run_id": "eval_1773268386432_h1ou8asx", "name": "tutor_response_end", "at_ms": 108887.0, "meta": {}}

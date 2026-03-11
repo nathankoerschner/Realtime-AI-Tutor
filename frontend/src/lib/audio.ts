@@ -1,10 +1,23 @@
+export type VisemeKey =
+  | 'rest'
+  | 'mbp'
+  | 'ai'
+  | 'e'
+  | 'o'
+  | 'u'
+  | 'fv'
+  | 'l'
+  | 'wq'
+  | 'etc';
+
 export type AudioAnalysisSnapshot = {
   level: number;
   speaking: boolean;
+  viseme: VisemeKey;
   timestamp: number;
 };
 
-export class StreamingAudioEngine {
+export class StreamingVisemeEngine {
   private analyser?: AnalyserNode;
   private data?: Uint8Array<ArrayBuffer>;
   private rafId = 0;
@@ -42,6 +55,7 @@ export class StreamingAudioEngine {
       onSnapshot({
         level,
         speaking,
+        viseme: pickViseme(level, timestamp),
         timestamp,
       });
       this.rafId = requestAnimationFrame(loop);
@@ -66,4 +80,11 @@ export class StreamingAudioEngine {
     this.analyser = undefined;
     this.context = undefined;
   }
+}
+
+function pickViseme(level: number, timestamp: number): VisemeKey {
+  if (level < 0.06) return 'rest';
+  const frames: VisemeKey[] = ['mbp', 'ai', 'e', 'o', 'u', 'fv', 'l', 'wq', 'etc'];
+  const index = Math.floor((timestamp / 90 + level * 5) % frames.length);
+  return frames[index]!;
 }

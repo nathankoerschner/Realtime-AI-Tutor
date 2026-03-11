@@ -8,8 +8,8 @@ describe('Avatar', () => {
     vi.useFakeTimers();
   });
 
-  it('renders with connection/speaking classes and speaking mouth', () => {
-    const { container } = render(<Avatar speaking connected />);
+  it('renders with connection/speaking classes and current viseme mouth', () => {
+    const { container } = render(<Avatar viseme="o" speaking connected />);
 
     const shell = container.querySelector('.avatar-shell');
     const mouth = container.querySelector('path[d^="M 114 139"]');
@@ -21,7 +21,7 @@ describe('Avatar', () => {
 
   it('blinks on the scheduled timer and reacts to mouse movement', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0);
-    const { container } = render(<Avatar speaking={false} connected={false} />);
+    const { container } = render(<Avatar viseme="rest" speaking={false} connected={false} />);
 
     const wrapper = container.firstElementChild as HTMLElement;
     const shell = container.querySelector('.avatar-shell') as HTMLElement;
