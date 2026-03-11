@@ -8,3 +8,6 @@ frontend/tsconfig.node.tsbuildinfo
 frontend/coverage/
 backend/.coverage
 backend/results/
+.pi/
+evals/runs/*
+evals/runs/

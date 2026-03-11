@@ -531,6 +531,66 @@ describe('App', () => {
     vi.useRealTimers();
   });
 
+  it('keeps an interrupted user transcript ahead of the next tutor response', async () => {
+    vi.useFakeTimers();
+
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
+
+    let eventHandler: (event: any) => void;
+    let audioSnapshotHandler: (snapshot: any) => void;
+    mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any, onRemoteAudio: any) => {
+      eventHandler = onEvent;
+      mockAttachToMediaStream.mockImplementation(async (_stream: any, onSnapshot: any) => {
+        audioSnapshotHandler = onSnapshot;
+      });
+      await onRemoteAudio({} as HTMLAudioElement, {} as MediaStream);
+    });
+
+    const { container } = render(<App />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    });
+
+    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Original answer' }));
+    act(() => vi.advanceTimersByTime(150));
+
+    // Interrupt the tutor. This should anchor a pending user bubble in-place.
+    act(() => eventHandler({ type: 'input_audio_buffer.speech_started' }));
+    expect(screen.getByText('…')).toBeInTheDocument();
+
+    // The interrupted response finishes cleanup first.
+    act(() => eventHandler({ type: 'response.audio_transcript.done' }));
+    act(() => eventHandler({ type: 'response.done' }));
+
+    // Before the transcript resolves, the tutor starts a new reply.
+    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 2 }));
+    act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Follow up answer' }));
+    act(() => eventHandler({ type: 'response.audio_transcript.done' }));
+    act(() => vi.advanceTimersByTime(150 * 10));
+
+    // Simulate a real user turn rather than brief bleed-through so it is not filtered.
+    act(() => vi.advanceTimersByTime(1300));
+    act(() => eventHandler({ type: 'input_audio_buffer.speech_stopped' }));
+
+    // The user transcript arrives later and should fill the earlier placeholder
+    // rather than append below the tutor's follow-up response.
+    act(() => eventHandler({
+      type: 'conversation.item.input_audio_transcription.completed',
+      transcript: 'My interruption',
+    }));
+
+    const bubbleTexts = Array.from(container.querySelectorAll('.chat-bubble-text')).map((node) => node.textContent);
+    expect(bubbleTexts).toContain('My interruption');
+    expect(bubbleTexts).toContain('Follow up answer');
+    expect(bubbleTexts.indexOf('My interruption')).toBeLessThan(bubbleTexts.indexOf('Follow up answer'));
+
+    vi.useRealTimers();
+  });
+
   it('handles response.done when no streaming message is active', async () => {
     vi.mocked(fetch).mockResolvedValue({
       ok: true,

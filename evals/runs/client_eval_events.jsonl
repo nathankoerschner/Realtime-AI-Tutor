@@ -1642,3 +1642,56 @@
 {"timestamp": "2026-03-11T18:08:07.495121+00:00", "source": "test", "eval_run_id": "test_run_123", "name": "test_event", "at_ms": 123.45, "meta": {"test": true}}
 {"timestamp": "2026-03-11T18:08:07.495450+00:00", "source": "test", "eval_run_id": null, "name": "another_event", "at_ms": 456.78, "meta": {}}
 {"timestamp": "2026-03-11T18:08:07.497769+00:00", "source": "frontend", "eval_run_id": null, "name": "minimal_event", "at_ms": null, "meta": {}}
+{"timestamp": "2026-03-11T19:25:39.064804+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "session_start", "at_ms": 1827.7, "meta": {}}
+{"timestamp": "2026-03-11T19:25:39.065169+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "connection_attempt", "at_ms": 1827.7, "meta": {}}
+{"timestamp": "2026-03-11T19:25:39.065338+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "first_audio_frame", "at_ms": 3890.1, "meta": {}}
+{"timestamp": "2026-03-11T19:25:39.065479+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "connection_duration", "at_ms": 7527.9, "meta": {"duration_ms": 5700.2}}
+{"timestamp": "2026-03-11T19:25:39.065570+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "connection_success", "at_ms": 7527.9, "meta": {}}
+{"timestamp": "2026-03-11T19:25:39.065651+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "session_end", "at_ms": 23356.9, "meta": {}}
+{"timestamp": "2026-03-11T19:25:39.065727+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "session_total_duration", "at_ms": 23356.9, "meta": {"duration_ms": 21529.2}}
+{"timestamp": "2026-03-11T19:27:16.844896+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "session_start", "at_ms": 1827.7, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.845235+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "connection_attempt", "at_ms": 1827.7, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.845513+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "first_audio_frame", "at_ms": 3890.1, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.845661+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "connection_duration", "at_ms": 7527.9, "meta": {"duration_ms": 5700.2}}
+{"timestamp": "2026-03-11T19:27:16.845752+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "connection_success", "at_ms": 7527.9, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.845832+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "session_end", "at_ms": 23356.9, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.845907+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "session_total_duration", "at_ms": 23356.9, "meta": {"duration_ms": 21529.2}}
+{"timestamp": "2026-03-11T19:27:16.845978+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "session_start", "at_ms": 24177.9, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.846052+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "connection_attempt", "at_ms": 24177.9, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.846124+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "connection_duration", "at_ms": 26105.8, "meta": {"duration_ms": 1927.8}}
+{"timestamp": "2026-03-11T19:27:16.846195+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "connection_success", "at_ms": 26105.8, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.846266+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_start", "at_ms": 28833.0, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.846332+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_duration", "at_ms": 29985.9, "meta": {"duration_ms": 1152.9}}
+{"timestamp": "2026-03-11T19:27:16.846401+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_end", "at_ms": 29986.0, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.846466+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "tutor_response_start", "at_ms": 30327.5, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.846551+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "tutor_response_end", "at_ms": 30863.5, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.846626+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_start", "at_ms": 33768.5, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.846693+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_duration", "at_ms": 37706.7, "meta": {"duration_ms": 3938.1}}
+{"timestamp": "2026-03-11T19:27:16.846765+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_end", "at_ms": 37706.7, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.846879+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "tutor_response_end", "at_ms": 40495.8, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.846995+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_start", "at_ms": 49889.9, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.847126+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_duration", "at_ms": 53036.6, "meta": {"duration_ms": 3146.6}}
+{"timestamp": "2026-03-11T19:27:16.847212+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_end", "at_ms": 53036.6, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.847293+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "tutor_response_end", "at_ms": 56748.8, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.847369+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_start", "at_ms": 71697.3, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.847443+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_duration", "at_ms": 73647.4, "meta": {"duration_ms": 1950.1}}
+{"timestamp": "2026-03-11T19:27:16.847511+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_end", "at_ms": 73647.4, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.847584+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_start", "at_ms": 76574.3, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.847654+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "tutor_response_end", "at_ms": 76599.4, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.847721+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_duration", "at_ms": 78613.0, "meta": {"duration_ms": 2038.7}}
+{"timestamp": "2026-03-11T19:27:16.847794+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_end", "at_ms": 78613.0, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.847863+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "tutor_response_end", "at_ms": 81405.3, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.847936+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_start", "at_ms": 91550.3, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.848006+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_duration", "at_ms": 92469.0, "meta": {"duration_ms": 918.7}}
+{"timestamp": "2026-03-11T19:27:16.848084+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_end", "at_ms": 92469.0, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.848148+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "tutor_response_end", "at_ms": 95850.3, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.848237+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_start", "at_ms": 111372.9, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.848311+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_duration", "at_ms": 112098.8, "meta": {"duration_ms": 725.9}}
+{"timestamp": "2026-03-11T19:27:16.848386+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_end", "at_ms": 112098.8, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.848460+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_start", "at_ms": 112682.6, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.848535+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "tutor_response_end", "at_ms": 112713.0, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.848605+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_duration", "at_ms": 114297.5, "meta": {"duration_ms": 1614.9}}
+{"timestamp": "2026-03-11T19:27:16.848682+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "user_speech_end", "at_ms": 114297.5, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.848764+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "tutor_response_end", "at_ms": 118519.7, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.848838+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "session_end", "at_ms": 121134.6, "meta": {}}
+{"timestamp": "2026-03-11T19:27:16.848911+00:00", "source": "frontend", "eval_run_id": "eval_1773257115702_5e0cdi3x", "name": "session_total_duration", "at_ms": 121134.6, "meta": {"duration_ms": 96956.7}}

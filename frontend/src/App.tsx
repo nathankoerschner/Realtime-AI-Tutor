@@ -382,17 +382,6 @@ export default function App() {
   function handleRealtimeEvent(event: RealtimeEvent) {
     const evaluator = evalCollectorRef.current;
 
-    // Debug: log all events to trace ordering issues
-    if (event.type.includes('speech') || event.type.includes('transcription') || event.type.includes('conversation.item') || event.type.includes('response.audio_transcript') || event.type.includes('response.done')) {
-      console.debug(`[tutor event] ${event.type}`, {
-        pendingUser: pendingUserMsgIdRef.current,
-        streamingAssistant: streamingMsgIdRef.current,
-        itemId: (event as any).item_id ?? (event as any).item?.id,
-        transcript: (event as any).transcript,
-        delta: (event as any).delta?.substring(0, 30),
-      });
-    }
-
     switch (event.type) {
       case 'input_audio_buffer.speech_started': {
         evaluator.markSpeechStart();
@@ -403,9 +392,11 @@ export default function App() {
           interruptAssistantMessage();
         }
 
-        // Don't surface a pending user bubble for probable bleed-through while
-        // the tutor is actively speaking.
-        if (!lastUserSpeechDuringTutorRef.current && !pendingUserMsgIdRef.current) {
+        // Always anchor the user turn as soon as speech starts so that if the
+        // assistant is interrupted, the eventual transcript stays ordered ahead
+        // of any follow-up tutor response. Probable bleed-through still gets
+        // filtered later by shouldIgnoreTranscript/removePendingUserMessage.
+        if (!pendingUserMsgIdRef.current) {
           createPendingUserMessage();
         }
         break;
