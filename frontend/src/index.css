@@ -563,6 +563,10 @@ button.muted-active {
   .session-controls {
     flex-direction: row;
   }
+
+  .lesson-topic-bar {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
