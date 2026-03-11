@@ -61,4 +61,23 @@ jobs:
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up --service=${{ secrets.RAILWAY_SERVICE_ID }} --detach
+          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+        run: |
+          set -euo pipefail
+
+          for attempt in 1 2 3; do
+            echo "Railway deploy attempt ${attempt}/3"
+
+            if railway up --service="$RAILWAY_SERVICE_ID" --detach --verbose; then
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              sleep_seconds=$((attempt * 15))
+              echo "Railway deploy failed, retrying in ${sleep_seconds}s..."
+              sleep "$sleep_seconds"
+            fi
+          done
+
+          echo "Railway deploy failed after 3 attempts"
+          exit 1
