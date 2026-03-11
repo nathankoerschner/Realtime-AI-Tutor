@@ -74,13 +74,35 @@ jobs:
         run: |
           set -euo pipefail
 
+          if [ -z "${RAILWAY_TOKEN:-}" ]; then
+            echo "RAILWAY_TOKEN is not set"
+            exit 1
+          fi
+
+          if [ -z "${RAILWAY_SERVICE_ID:-}" ]; then
+            echo "RAILWAY_SERVICE_ID is not set"
+            exit 1
+          fi
+
           latest_deployment_id() {
-            railway deployment list --limit 10 --json | python3 -c 'import json,sys; data=json.load(sys.stdin); print(data[0]["id"] if data else "")'
+            local output
+            if ! output="$(railway deployment list --service="$RAILWAY_SERVICE_ID" --limit 10 --json 2>/tmp/railway-deployment-list.err)"; then
+              echo "Unable to list Railway deployments:" >&2
+              cat /tmp/railway-deployment-list.err >&2 || true
+              return 1
+            fi
+            python3 -c 'import json,sys; raw=sys.stdin.read().strip(); data=json.loads(raw) if raw else []; print(data[0]["id"] if data else "")' <<<"$output"
           }
 
           deployment_status() {
             target_id="$1"
-            railway deployment list --limit 20 --json | python3 -c 'import json,sys; needle=sys.argv[1]; data=json.load(sys.stdin); print(next((item["status"] for item in data if item["id"] == needle), ""))' "$target_id"
+            local output
+            if ! output="$(railway deployment list --service="$RAILWAY_SERVICE_ID" --limit 20 --json 2>/tmp/railway-deployment-list.err)"; then
+              echo "Unable to list Railway deployments:" >&2
+              cat /tmp/railway-deployment-list.err >&2 || true
+              return 1
+            fi
+            python3 -c 'import json,sys; needle=sys.argv[1]; raw=sys.stdin.read().strip(); data=json.loads(raw) if raw else []; print(next((item["status"] for item in data if item["id"] == needle), ""))' "$target_id" <<<"$output"
           }
 
           baseline_deployment_id="$(latest_deployment_id)"
