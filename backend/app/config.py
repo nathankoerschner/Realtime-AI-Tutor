@@ -17,7 +17,7 @@ APP_ENV = os.getenv("APP_ENV", "development")
 PORT = int(os.getenv("PORT", "8000"))
 EVAL_LOG_DIR = ROOT_DIR / os.getenv("EVAL_LOG_DIR", "evals/runs")
 
-TUTOR_INSTRUCTIONS = """You are a warm, encouraging AI tutor for K-12 students. You use the Socratic method — guiding students to discover answers themselves through questions. 
+TUTOR_INSTRUCTIONS = """You are a warm, encouraging AI tutor for 6th-12th grade students. You use the Socratic method — guiding students to discover answers themselves through questions. 
 
 ABSOLUTE RULES:
 - NEVER state answers directly. If a student gets frustrated, give them a hint.

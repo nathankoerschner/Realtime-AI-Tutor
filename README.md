@@ -1,13 +1,38 @@
 # AI Tutor
 
-A voice-first tutoring prototype built with FastAPI, React, and the OpenAI Realtime API.
+A lightweight realtime tutoring prototype built with FastAPI, React, and the OpenAI Realtime API.
+
+## Start here for reviewers
+
+If you are reviewing this project against the realtime tutor brief, start with:
+
+1. [`docs/submission.md`](docs/submission.md) for the intended claim, scope, and reviewer framing
+2. [`docs/architecture.md`](docs/architecture.md) for system design and tradeoffs
+3. [`docs/latency.md`](docs/latency.md) for latency methodology and measurement boundaries
+4. [`docs/limitations.md`](docs/limitations.md) for known gaps and future work
+5. [`docs/decisions.md`](docs/decisions.md) for a concise decision log
+
+Then refer to:
+
+- [`README.md`](README.md) for setup and repo structure
+- [`evals/README.md`](evals/README.md) and [`evals/USAGE.md`](evals/USAGE.md) for evaluation tooling
 
 ## Overview
 
 - Browser connects directly to OpenAI Realtime over **WebRTC**
 - FastAPI backend creates ephemeral sessions and serves the app
 - Supports microphone input, streamed tutor audio, and optional typed input
-- Includes an animated SVG avatar and optional latency overlay
+- Includes an expressive lightweight 2D avatar optimized for conversational presence
+
+## Project docs
+
+For submission-oriented documentation and design rationale, see:
+
+- [`docs/submission.md`](docs/submission.md) — project thesis, scope, and reviewer framing
+- [`docs/architecture.md`](docs/architecture.md) — architecture decisions and system design
+- [`docs/latency.md`](docs/latency.md) — latency methodology, observable checkpoints, and evaluation framing
+- [`docs/limitations.md`](docs/limitations.md) — current limitations and future work
+- [`docs/decisions.md`](docs/decisions.md) — concise decision log and tradeoffs
 
 ## Tech
 
@@ -80,7 +105,7 @@ Run all tests:
 
 ## Evaluation Framework
 
-The project includes a comprehensive evaluation system for measuring tutoring effectiveness:
+The project includes an evaluation system for measuring responsiveness, tutoring behavior, and conversation quality:
 
 ### Quick Start
 ```bash
@@ -95,9 +120,9 @@ python scripts/run-evals.py analyze --hours 24
 ```
 
 ### Key Metrics
-- **Performance**: Time to first frame, response latency, connection reliability
-- **Socratic Method**: Answer-giving detection, question quality, guidance effectiveness
-- **Conversation Quality**: Context retention, adaptability, educational progression
+- **Performance**: time to first frame, response latency, connection reliability
+- **Socratic Method**: answer-giving detection, question quality, guidance effectiveness
+- **Conversation Quality**: context retention, adaptability, educational progression
 
 ### Example Results
 ```bash
@@ -115,7 +140,7 @@ python scripts/run-evals.py analyze --hours 24
    Avg Response Latency: 1200ms (B)
 ```
 
-See [`evals/README.md`](evals/README.md) and [`evals/USAGE.md`](evals/USAGE.md) for comprehensive documentation.
+See [`evals/README.md`](evals/README.md) and [`evals/USAGE.md`](evals/USAGE.md) for evaluation details, and the `docs/` directory for submission-oriented project documentation.
 
 ## Production
 
@@ -158,5 +183,5 @@ Returns a simple health response.
 
 - The backend is **not** in the live audio path.
 - The app uses **WebRTC**, not raw WebSockets, for browser realtime media.
-- The avatar uses lightweight audio-reactive animation, not phoneme-accurate lip sync.
+- The avatar is intentionally lightweight and presence-focused rather than phoneme-accurate.
 - There is no persistent transcript or session history.
