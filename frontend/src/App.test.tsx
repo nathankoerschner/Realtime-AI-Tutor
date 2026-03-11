@@ -10,8 +10,8 @@ const mockDispose = vi.fn();
 const mockResetSpeechFrameFlag = vi.fn();
 
 vi.mock('./components/Avatar/Avatar', () => ({
-  Avatar: ({ viseme, speaking, connected, connecting }: Record<string, unknown>) => (
-    <div data-testid="avatar">{JSON.stringify({ viseme, speaking, connected, connecting })}</div>
+  Avatar: ({ viseme, speaking, connected }: Record<string, unknown>) => (
+    <div data-testid="avatar">{JSON.stringify({ viseme, speaking, connected })}</div>
   ),
 }));
 
@@ -136,7 +136,7 @@ describe('App', () => {
     await waitFor(() => expect(mockConnect).toHaveBeenCalledOnce());
     expect(screen.getByRole('alert')).toHaveTextContent('Realtime error');
 
-    fireEvent.click(screen.getByRole('button', { name: /Learn about clauses/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Learn about linear equations/i }));
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('send failed'));
 
     fireEvent.click(screen.getByRole('button', { name: /Learn about molecular structure/i }));
@@ -190,7 +190,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ viseme: 'rest', speaking: false, level: 0, timestamp: 1 }));
 
     // First, send a typed user message so there are multiple messages in state
     const chatInput = screen.getByPlaceholderText('Type a message…');
@@ -208,6 +208,7 @@ describe('App', () => {
     expect(screen.getByText('first question')).toBeInTheDocument();
 
     // Now stream an assistant response — there are already 2 user messages in state
+    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 2 }));
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Answer here' }));
     // Advance to reveal words — map iterates over non-matching messages too
     act(() => vi.advanceTimersByTime(150 * 20));
@@ -245,8 +246,18 @@ describe('App', () => {
     act(() => eventHandler({ type: 'input_audio_buffer.speech_started' }));
     expect(screen.getAllByText('…')).toHaveLength(1);
 
+    // Bind the placeholder to the server-side conversation item id.
+    act(() => eventHandler({
+      type: 'conversation.item.created',
+      item: { id: 'item-1', role: 'user', content: [{ type: 'input_audio' }] },
+    }));
+
     // Transcription completes, resolves the placeholder
-    act(() => eventHandler({ type: 'conversation.item.input_audio_transcription.completed', transcript: 'Hello tutor' }));
+    act(() => eventHandler({
+      type: 'conversation.item.input_audio_transcription.completed',
+      item_id: 'item-1',
+      transcript: 'Hello tutor',
+    }));
     expect(screen.getByText('Hello tutor')).toBeInTheDocument();
     expect(screen.queryByText('…')).not.toBeInTheDocument();
   });
@@ -312,6 +323,39 @@ describe('App', () => {
     // No speech_started first — fallback addUserMessage path
     act(() => eventHandler({ type: 'conversation.item.input_audio_transcription.completed', transcript: 'Surprise!' }));
     expect(screen.getByText('Surprise!')).toBeInTheDocument();
+  });
+
+  it('binds transcript events to the matching conversation item id', async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
+
+    let eventHandler: (event: any) => void;
+    mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any) => {
+      eventHandler = onEvent;
+    });
+
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    await waitFor(() => expect(mockConnect).toHaveBeenCalledOnce());
+
+    act(() => eventHandler({ type: 'input_audio_buffer.speech_started' }));
+    expect(screen.getByText('…')).toBeInTheDocument();
+
+    act(() => eventHandler({
+      type: 'conversation.item.created',
+      item: { id: 'item-abc', role: 'user', content: [{ type: 'input_audio' }] },
+    }));
+
+    act(() => eventHandler({
+      type: 'conversation.item.input_audio_transcription.completed',
+      item_id: 'item-abc',
+      transcript: 'hey there',
+    }));
+
+    expect(screen.getByText('hey there')).toBeInTheDocument();
+    expect(screen.queryByText('…')).not.toBeInTheDocument();
   });
 
   it('handles removePendingUserMessage when no pending message exists', async () => {
@@ -408,6 +452,49 @@ describe('App', () => {
     act(() => vi.advanceTimersByTime(150 * 10));
 
     expect(screen.getByText('Test')).toBeInTheDocument();
+
+    vi.useRealTimers();
+  });
+
+  it('stops assistant transcription immediately when the user interrupts', async () => {
+    vi.useFakeTimers();
+
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
+
+    let eventHandler: (event: any) => void;
+    let audioSnapshotHandler: (snapshot: any) => void;
+    mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any, onRemoteAudio: any) => {
+      eventHandler = onEvent;
+      mockAttachToMediaStream.mockImplementation(async (_stream: any, onSnapshot: any) => {
+        audioSnapshotHandler = onSnapshot;
+      });
+      await onRemoteAudio({} as HTMLAudioElement, {} as MediaStream);
+    });
+
+    render(<App />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    });
+
+    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Hello there friend' }));
+
+    // Let only the first spoken chunk become visible.
+    act(() => vi.advanceTimersByTime(150));
+    expect(screen.getByText('Hello')).toBeInTheDocument();
+
+    // User interruption should freeze the transcript at the visible text.
+    act(() => eventHandler({ type: 'input_audio_buffer.speech_started' }));
+    act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: ' trailing words' }));
+    act(() => eventHandler({ type: 'response.audio_transcript.done' }));
+    act(() => eventHandler({ type: 'response.done' }));
+    act(() => vi.advanceTimersByTime(150 * 10));
+
+    expect(screen.getByText('Hello')).toBeInTheDocument();
+    expect(screen.queryByText('Hello there friend trailing words')).not.toBeInTheDocument();
 
     vi.useRealTimers();
   });

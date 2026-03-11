@@ -6,7 +6,7 @@ import { StreamingVisemeEngine, type AudioAnalysisSnapshot, type VisemeKey } fro
 import { RealtimeClient, type RealtimeEvent, type SessionBootstrap } from './lib/realtime';
 import { EvalCollector } from './lib/evals';
 
-const lessonTopics = ['linear equations', 'clauses', 'molecular structure'] as const;
+const lessonTopics = ['linear equations', 'molecular structure'] as const;
 
 let messageIdCounter = 0;
 function nextMessageId() {
@@ -29,7 +29,9 @@ export default function App() {
   const streamingMsgIdRef = useRef<string | null>(null);
   // Track pending user message placeholder (waiting for transcription)
   const pendingUserMsgIdRef = useRef<string | null>(null);
+  const userMessageIdByItemIdRef = useRef<Record<string, string>>({});
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const interruptedAssistantRef = useRef(false);
 
   // Word-by-word reveal state
   const wordRevealRef = useRef<{
@@ -39,6 +41,9 @@ export default function App() {
   }>({ fullText: '', revealedWordCount: 0, done: false });
   const wordRevealTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const speakingRef = useRef(false);
+  const userSpeechStartedAtRef = useRef<number | null>(null);
+  const lastUserSpeechDurationMsRef = useRef(0);
+  const lastUserSpeechDuringTutorRef = useRef(false);
 
   useEffect(() => {
     realtimeRef.current.setLocalMicMuted(muted);
@@ -98,14 +103,40 @@ export default function App() {
     return id;
   }
 
+  function clearUserMessageItemBinding(messageId: string) {
+    for (const [itemId, boundMessageId] of Object.entries(userMessageIdByItemIdRef.current)) {
+      if (boundMessageId === messageId) {
+        delete userMessageIdByItemIdRef.current[itemId];
+      }
+    }
+  }
+
+  function bindPendingUserMessageToItem(itemId: string | undefined) {
+    if (!itemId) return pendingUserMsgIdRef.current;
+
+    const existingId = userMessageIdByItemIdRef.current[itemId];
+    if (existingId) return existingId;
+
+    const pendingId = pendingUserMsgIdRef.current;
+    if (pendingId) {
+      userMessageIdByItemIdRef.current[itemId] = pendingId;
+      return pendingId;
+    }
+
+    return null;
+  }
+
   // Resolve the pending user message with actual transcript
-  function resolvePendingUserMessage(text: string) {
-    const id = pendingUserMsgIdRef.current;
+  function resolvePendingUserMessage(text: string, itemId?: string) {
+    const id = bindPendingUserMessageToItem(itemId) ?? pendingUserMsgIdRef.current;
     if (id) {
       setMessages((prev) =>
         prev.map((m) => (m.id === id ? { ...m, text, pending: false } : m)),
       );
-      pendingUserMsgIdRef.current = null;
+      if (pendingUserMsgIdRef.current === id) {
+        pendingUserMsgIdRef.current = null;
+      }
+      clearUserMessageItemBinding(id);
     } else {
       // No pending placeholder — just append (fallback)
       addUserMessage(text);
@@ -113,18 +144,39 @@ export default function App() {
   }
 
   // Remove empty pending user message (e.g. if transcription was empty)
-  function removePendingUserMessage() {
-    const id = pendingUserMsgIdRef.current;
+  function removePendingUserMessage(itemId?: string) {
+    const id = bindPendingUserMessageToItem(itemId) ?? pendingUserMsgIdRef.current;
     if (id) {
       setMessages((prev) => prev.filter((m) => m.id !== id));
-      pendingUserMsgIdRef.current = null;
+      if (pendingUserMsgIdRef.current === id) {
+        pendingUserMsgIdRef.current = null;
+      }
+      clearUserMessageItemBinding(id);
     }
+  }
+
+  function shouldIgnoreTranscript(transcript: string) {
+    const normalized = transcript.trim();
+    if (!normalized) return true;
+
+    const wordCount = normalized.split(/\s+/).filter(Boolean).length;
+    const speechDurationMs = lastUserSpeechDurationMsRef.current;
+    const happenedDuringTutorSpeech = lastUserSpeechDuringTutorRef.current;
+
+    // Very short snippets detected while the tutor is already speaking are
+    // usually speaker bleed / room noise rather than an intentional user turn.
+    if (happenedDuringTutorSpeech && speechDurationMs < 1200 && wordCount <= 3) {
+      return true;
+    }
+
+    return false;
   }
 
   // Start a new streaming assistant message and begin word reveal
   function startAssistantMessage(): string {
     const id = nextMessageId();
     streamingMsgIdRef.current = id;
+    interruptedAssistantRef.current = false;
     wordRevealRef.current = { fullText: '', revealedWordCount: 0, done: false };
     const msg: ChatMessage = {
       id,
@@ -209,6 +261,29 @@ export default function App() {
       prev.map((m) => (m.id === id ? { ...m, text: fullText, streaming: false } : m)),
     );
     streamingMsgIdRef.current = null;
+    interruptedAssistantRef.current = false;
+    wordRevealRef.current = { fullText: '', revealedWordCount: 0, done: false };
+  }
+
+  function interruptAssistantMessage() {
+    const id = streamingMsgIdRef.current;
+    if (!id) return;
+
+    stopWordRevealTimer();
+
+    const reveal = wordRevealRef.current;
+    const tokens = reveal.fullText.split(/(\s+)/);
+    const visibleText = tokens.slice(0, reveal.revealedWordCount).join('');
+
+    setMessages((prev) => {
+      if (!visibleText.trim()) {
+        return prev.filter((m) => m.id !== id);
+      }
+      return prev.map((m) => (m.id === id ? { ...m, text: visibleText, streaming: false } : m));
+    });
+
+    streamingMsgIdRef.current = null;
+    interruptedAssistantRef.current = true;
     wordRevealRef.current = { fullText: '', revealedWordCount: 0, done: false };
   }
 
@@ -252,6 +327,11 @@ export default function App() {
     setViseme('rest');
     streamingMsgIdRef.current = null;
     pendingUserMsgIdRef.current = null;
+    interruptedAssistantRef.current = false;
+    userMessageIdByItemIdRef.current = {};
+    userSpeechStartedAtRef.current = null;
+    lastUserSpeechDurationMsRef.current = 0;
+    lastUserSpeechDuringTutorRef.current = false;
     stopWordRevealTimer();
     wordRevealRef.current = { fullText: '', revealedWordCount: 0, done: false };
 
@@ -274,45 +354,90 @@ export default function App() {
     const evaluator = evalCollectorRef.current;
 
     // Debug: log all events to trace ordering issues
-    if (event.type.includes('speech') || event.type.includes('transcription') || event.type.includes('response.audio_transcript') || event.type.includes('response.done')) {
+    if (event.type.includes('speech') || event.type.includes('transcription') || event.type.includes('conversation.item') || event.type.includes('response.audio_transcript') || event.type.includes('response.done')) {
       console.debug(`[tutor event] ${event.type}`, {
         pendingUser: pendingUserMsgIdRef.current,
         streamingAssistant: streamingMsgIdRef.current,
+        itemId: (event as any).item_id ?? (event as any).item?.id,
         transcript: (event as any).transcript,
         delta: (event as any).delta?.substring(0, 30),
       });
     }
 
     switch (event.type) {
-      case 'input_audio_buffer.speech_started':
+      case 'input_audio_buffer.speech_started': {
         evaluator.markSpeechStart();
-        // Create a placeholder so the user message appears before the AI response
-        if (!pendingUserMsgIdRef.current) {
+        userSpeechStartedAtRef.current = performance.now();
+        lastUserSpeechDuringTutorRef.current = speakingRef.current || !!streamingMsgIdRef.current;
+
+        if (lastUserSpeechDuringTutorRef.current) {
+          interruptAssistantMessage();
+        }
+
+        // Don't surface a pending user bubble for probable bleed-through while
+        // the tutor is actively speaking.
+        if (!lastUserSpeechDuringTutorRef.current && !pendingUserMsgIdRef.current) {
           createPendingUserMessage();
         }
         break;
-      case 'input_audio_buffer.speech_stopped':
-        evaluator.markSpeechEnd();
-        visemeEngineRef.current.resetSpeechFrameFlag();
-        break;
-      case 'conversation.item.input_audio_transcription.completed': {
-        // Fill in the placeholder with the actual transcript
-        const transcript = (event as any).transcript as string | undefined;
-        if (transcript?.trim()) {
-          resolvePendingUserMessage(transcript.trim());
-        } else {
-          // Empty transcription — remove the placeholder
-          removePendingUserMessage();
+      }
+      case 'conversation.item.created': {
+        const item = (event as any).item;
+        const itemId = item?.id as string | undefined;
+        const isUserAudioItem = item?.role === 'user'
+          && Array.isArray(item?.content)
+          && item.content.some((contentPart: any) => typeof contentPart?.type === 'string' && contentPart.type.includes('audio'));
+
+        if (isUserAudioItem) {
+          bindPendingUserMessageToItem(itemId);
         }
         break;
       }
+      case 'input_audio_buffer.speech_stopped': {
+        evaluator.markSpeechEnd();
+        if (userSpeechStartedAtRef.current != null) {
+          lastUserSpeechDurationMsRef.current = performance.now() - userSpeechStartedAtRef.current;
+        }
+        userSpeechStartedAtRef.current = null;
+        visemeEngineRef.current.resetSpeechFrameFlag();
+        break;
+      }
+      case 'conversation.item.input_audio_transcription.completed': {
+        const itemId = (event as any).item_id as string | undefined;
+        const transcript = ((event as any).transcript as string | undefined)?.trim() ?? '';
+
+        if (shouldIgnoreTranscript(transcript)) {
+          removePendingUserMessage(itemId);
+          lastUserSpeechDurationMsRef.current = 0;
+          lastUserSpeechDuringTutorRef.current = false;
+          break;
+        }
+
+        // Fill in the placeholder with the actual transcript.
+        resolvePendingUserMessage(transcript, itemId);
+        lastUserSpeechDurationMsRef.current = 0;
+        lastUserSpeechDuringTutorRef.current = false;
+        break;
+      }
       case 'conversation.item.input_audio_transcription.failed': {
-        // Whisper transcription failed — replace placeholder with fallback text
+        const itemId = (event as any).item_id as string | undefined;
+        // Input audio transcription failed — only surface it if this looked
+        // like an intentional user turn rather than background noise during
+        // tutor audio.
         console.warn('[tutor] Input audio transcription failed', event);
-        resolvePendingUserMessage('[could not transcribe]');
+        if (lastUserSpeechDuringTutorRef.current) {
+          removePendingUserMessage(itemId);
+        } else {
+          resolvePendingUserMessage('[could not transcribe]', itemId);
+        }
+        lastUserSpeechDurationMsRef.current = 0;
+        lastUserSpeechDuringTutorRef.current = false;
         break;
       }
       case 'response.audio_transcript.delta': {
+        if (interruptedAssistantRef.current) {
+          break;
+        }
         evaluator.markFirst('tutor_response_start');
         const delta = (event as any).delta as string | undefined;
         if (delta) {
@@ -321,12 +446,20 @@ export default function App() {
         break;
       }
       case 'response.audio_transcript.done': {
+        if (interruptedAssistantRef.current) {
+          interruptedAssistantRef.current = false;
+          break;
+        }
         // Mark transcript complete — reveal timer will finalize once all words shown
         markTranscriptDone();
         break;
       }
       case 'response.done':
         evaluator.markTutorResponseEnd();
+        if (interruptedAssistantRef.current) {
+          interruptedAssistantRef.current = false;
+          break;
+        }
         // Also finalize in case transcript.done didn't fire
         if (streamingMsgIdRef.current) {
           markTranscriptDone();
@@ -387,26 +520,18 @@ export default function App() {
         <div className="session-layout">
           <section className="avatar-area">
             <div className="avatar-center-wrapper">
-              <Avatar
-                viseme={viseme}
-                speaking={speaking}
-                connected={isConnected}
-                connecting={connectionState === 'connecting'}
-              />
-            </div>
-
-            <div className="lesson-topic-bar" aria-label="Suggested lesson topics">
-              {lessonTopics.map((topic) => (
-                <button
-                  key={topic}
-                  type="button"
-                  className="secondary lesson-topic-button"
-                  disabled={!isConnected}
-                  onClick={() => sendText(`Can you teach me about ${topic}?`)}
-                >
-                  Learn about {topic}
-                </button>
-              ))}
+              {connectionState === 'connecting' ? (
+                <div className="connecting-spinner" role="status" aria-label="Connecting">
+                  <div className="spinner-ring" />
+                  <span className="spinner-label">Connecting…</span>
+                </div>
+              ) : (
+                <Avatar
+                  viseme={viseme}
+                  speaking={speaking}
+                  connected={isConnected}
+                />
+              )}
             </div>
 
             <SessionControls
@@ -420,6 +545,7 @@ export default function App() {
           <ChatPanel
             messages={messages}
             onSend={sendText}
+            suggestedTopics={lessonTopics}
             disabled={!isConnected}
           />
         </div>

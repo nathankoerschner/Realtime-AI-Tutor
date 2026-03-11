@@ -8,7 +8,6 @@ def test_log_eval_event_writes_jsonl_records(tmp_path, monkeypatch) -> None:
 
     path = eval_logging._log_path('sample')
     assert path == tmp_path / 'sample.jsonl'
-
     eval_logging.log_eval_event('sample', {'ok': True})
 
     contents = path.read_text(encoding='utf-8').strip().splitlines()

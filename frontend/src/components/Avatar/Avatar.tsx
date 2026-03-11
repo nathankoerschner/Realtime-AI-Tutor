@@ -5,7 +5,6 @@ type AvatarProps = {
   viseme: VisemeKey;
   speaking: boolean;
   connected: boolean;
-  connecting?: boolean;
 };
 
 // Anime-style mouths — small, expressive, centered lower on face
@@ -136,7 +135,7 @@ const CloudBody = memo(function CloudBody() {
   );
 });
 
-export function Avatar({ viseme, speaking, connected, connecting }: AvatarProps) {
+export function Avatar({ viseme, speaking, connected }: AvatarProps) {
   const [blinking, setBlinking] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -216,7 +215,7 @@ export function Avatar({ viseme, speaking, connected, connecting }: AvatarProps)
 
   return (
     <div ref={wrapperRef}>
-    <div className={`avatar-shell ${speaking ? 'speaking' : ''} ${connected ? 'connected' : ''} ${connecting ? 'connecting' : ''}`}>
+    <div className={`avatar-shell ${speaking ? 'speaking' : ''} ${connected ? 'connected' : ''}`}>
       <svg viewBox="-80 -80 400 400" className="avatar-svg" aria-label="Tutor avatar">
         <CloudBody />
 

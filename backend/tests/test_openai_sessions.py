@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import httpx
 import pytest
 
 import app.services.openai_sessions as openai_sessions
@@ -20,9 +21,10 @@ class DummyResponse:
 
 
 class DummyClient:
-    def __init__(self, response: DummyResponse, sink: dict[str, Any]):
-        self._response = response
+    def __init__(self, outcomes: list[DummyResponse | Exception], sink: dict[str, Any]):
+        self._outcomes = outcomes
         self._sink = sink
+        self._sink['calls'] = 0
 
     async def __aenter__(self):
         return self
@@ -31,10 +33,14 @@ class DummyClient:
         return False
 
     async def post(self, url: str, *, headers: dict[str, str], json: dict[str, Any]):
+        self._sink['calls'] += 1
         self._sink['url'] = url
         self._sink['headers'] = headers
         self._sink['json'] = json
-        return self._response
+        outcome = self._outcomes.pop(0)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return outcome
 
 
 @pytest.mark.anyio
@@ -50,9 +56,7 @@ async def test_create_realtime_session_builds_payload_and_logs_metrics(monkeypat
 
     monkeypatch.setattr(openai_sessions, 'OPENAI_API_KEY', 'test-key')
     monkeypatch.setattr(openai_sessions, 'OPENAI_REALTIME_MODEL', 'test-model')
-    monkeypatch.setattr(openai_sessions, 'httpx', type('Httpx', (), {
-        'AsyncClient': lambda timeout: DummyClient(response, captured),
-    }))
+    monkeypatch.setattr(openai_sessions.httpx, 'AsyncClient', lambda timeout: DummyClient([response], captured))
     monkeypatch.setattr(openai_sessions, 'log_eval_event', lambda kind, payload: logs.append((kind, payload)))
 
     data = await openai_sessions.create_realtime_session('fractions', 'grade 6', 'eval-1')
@@ -68,6 +72,41 @@ async def test_create_realtime_session_builds_payload_and_logs_metrics(monkeypat
     assert logs[0][0] == 'openai_session_metrics'
     assert logs[0][1]['ok'] is True
     assert logs[0][1]['eval_run_id'] == 'eval-1'
+    assert logs[0][1]['attempts'] == 1
+
+
+@pytest.mark.anyio
+async def test_create_realtime_session_retries_timeout_then_succeeds(monkeypatch) -> None:
+    captured: dict[str, Any] = {}
+    logs: list[tuple[str, dict[str, Any]]] = []
+    response = DummyResponse(
+        is_error=False,
+        status_code=200,
+        text='ok',
+        payload={'client_secret': {'value': 'secret'}},
+    )
+    sleeps: list[float] = []
+
+    monkeypatch.setattr(openai_sessions, 'OPENAI_API_KEY', 'test-key')
+    monkeypatch.setattr(
+        openai_sessions.httpx,
+        'AsyncClient',
+        lambda timeout: DummyClient([httpx.ReadTimeout('timed out'), response], captured),
+    )
+    monkeypatch.setattr(openai_sessions, 'log_eval_event', lambda kind, payload: logs.append((kind, payload)))
+
+    async def fake_sleep(delay: float) -> None:
+        sleeps.append(delay)
+
+    monkeypatch.setattr(openai_sessions.asyncio, 'sleep', fake_sleep)
+
+    data = await openai_sessions.create_realtime_session()
+
+    assert data['client_secret']['value'] == 'secret'
+    assert captured['calls'] == 2
+    assert sleeps == [0.5]
+    assert logs[0][1]['ok'] is True
+    assert logs[0][1]['attempts'] == 2
 
 
 @pytest.mark.anyio
@@ -83,16 +122,60 @@ async def test_create_realtime_session_raises_and_logs_on_http_error(monkeypatch
     captured: dict[str, Any] = {}
     logs: list[tuple[str, dict[str, Any]]] = []
     response = DummyResponse(is_error=True, status_code=500, text='bad upstream')
+    sleeps: list[float] = []
 
     monkeypatch.setattr(openai_sessions, 'OPENAI_API_KEY', 'test-key')
-    monkeypatch.setattr(openai_sessions, 'httpx', type('Httpx', (), {
-        'AsyncClient': lambda timeout: DummyClient(response, captured),
-    }))
+    monkeypatch.setattr(openai_sessions.httpx, 'AsyncClient', lambda timeout: DummyClient([response, response, response], captured))
     monkeypatch.setattr(openai_sessions, 'log_eval_event', lambda kind, payload: logs.append((kind, payload)))
 
-    with pytest.raises(OpenAISessionError, match='OpenAI session creation failed: 500 bad upstream'):
+    async def fake_sleep(delay: float) -> None:
+        sleeps.append(delay)
+
+    monkeypatch.setattr(openai_sessions.asyncio, 'sleep', fake_sleep)
+
+    with pytest.raises(OpenAISessionError, match='OpenAI session creation failed after 3 attempts: 500 bad upstream'):
         await openai_sessions.create_realtime_session()
 
     assert captured['json']['instructions'] == openai_sessions.TUTOR_INSTRUCTIONS
+    assert captured['calls'] == 3
+    assert sleeps == [0.5, 1.0]
     assert logs[0][1]['ok'] is False
     assert logs[0][1]['status_code'] == 500
+    assert logs[0][1]['attempts'] == 3
+
+
+@pytest.mark.anyio
+async def test_create_realtime_session_raises_and_logs_on_transport_error(monkeypatch) -> None:
+    captured: dict[str, Any] = {}
+    logs: list[tuple[str, dict[str, Any]]] = []
+    sleeps: list[float] = []
+
+    monkeypatch.setattr(openai_sessions, 'OPENAI_API_KEY', 'test-key')
+    monkeypatch.setattr(
+        openai_sessions.httpx,
+        'AsyncClient',
+        lambda timeout: DummyClient(
+            [
+                httpx.ReadTimeout('timed out'),
+                httpx.ReadTimeout('timed out again'),
+                httpx.ReadTimeout('timed out finally'),
+            ],
+            captured,
+        ),
+    )
+    monkeypatch.setattr(openai_sessions, 'log_eval_event', lambda kind, payload: logs.append((kind, payload)))
+
+    async def fake_sleep(delay: float) -> None:
+        sleeps.append(delay)
+
+    monkeypatch.setattr(openai_sessions.asyncio, 'sleep', fake_sleep)
+
+    with pytest.raises(OpenAISessionError, match='OpenAI session creation failed after 3 attempts due to transport error: timed out finally'):
+        await openai_sessions.create_realtime_session()
+
+    assert captured['calls'] == 3
+    assert sleeps == [0.5, 1.0]
+    assert logs[0][1]['ok'] is False
+    assert logs[0][1]['status_code'] is None
+    assert logs[0][1]['attempts'] == 3
+    assert logs[0][1]['error'] == 'ReadTimeout'

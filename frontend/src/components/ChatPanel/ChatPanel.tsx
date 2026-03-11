@@ -12,10 +12,11 @@ export type ChatMessage = {
 type ChatPanelProps = {
   messages: ChatMessage[];
   onSend: (text: string) => void;
+  suggestedTopics?: readonly string[];
   disabled?: boolean;
 };
 
-export function ChatPanel({ messages, onSend, disabled }: ChatPanelProps) {
+export function ChatPanel({ messages, onSend, suggestedTopics = [], disabled }: ChatPanelProps) {
   const [value, setValue] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -56,6 +57,25 @@ export function ChatPanel({ messages, onSend, disabled }: ChatPanelProps) {
         ))}
         <div ref={bottomRef} />
       </div>
+
+      {suggestedTopics.length > 0 && (
+        <div className="chat-topic-suggestions" aria-label="Suggested starting topics">
+          <span className="chat-topic-suggestions-label">Start with</span>
+          <div className="chat-topic-suggestions-list">
+            {suggestedTopics.map((topic) => (
+              <button
+                key={topic}
+                type="button"
+                className="secondary lesson-topic-button"
+                disabled={disabled}
+                onClick={() => onSend(`Can you teach me about ${topic}?`)}
+              >
+                Learn about {topic}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <form className="chat-input" onSubmit={handleSubmit}>
         <input

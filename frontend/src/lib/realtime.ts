@@ -86,13 +86,27 @@ export class RealtimeClient {
     await this.peer.setRemoteDescription(answer);
     await channelReady;
 
-    // Enable input audio transcription so user speech appears in chat
+    // Keep the client-side session config aligned with the backend defaults.
+    // Bias VAD toward deliberate near-field speech and avoid interruptions from
+    // room noise while the tutor is already talking.
+    // Use the higher-accuracy GPT-4o transcription model rather than Whisper.
     this.dataChannel!.send(
       JSON.stringify({
         type: 'session.update',
         session: {
           input_audio_transcription: {
-            model: 'whisper-1',
+            model: 'gpt-4o-transcribe',
+          },
+          input_audio_noise_reduction: {
+            type: 'near_field',
+          },
+          turn_detection: {
+            type: 'server_vad',
+            threshold: 0.72,
+            prefix_padding_ms: 250,
+            silence_duration_ms: 700,
+            create_response: true,
+            interrupt_response: true,
           },
         },
       }),

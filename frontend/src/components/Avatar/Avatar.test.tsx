@@ -9,24 +9,23 @@ describe('Avatar', () => {
   });
 
   it('renders with connection/speaking classes and current viseme mouth', () => {
-    const { container } = render(<Avatar viseme="o" speaking connected connecting={false} />);
+    const { container } = render(<Avatar viseme="o" speaking connected />);
 
     const shell = container.querySelector('.avatar-shell');
     const mouth = container.querySelector('path[d^="M 114 139"]');
 
     expect(screen.getByLabelText('Tutor avatar')).toBeInTheDocument();
     expect(shell).toHaveClass('speaking', 'connected');
-    expect(shell).not.toHaveClass('connecting');
     expect(mouth).toHaveAttribute('fill', '#5c1a2a');
   });
 
   it('blinks on the scheduled timer and reacts to mouse movement', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0);
-    const { container } = render(<Avatar viseme="rest" speaking={false} connected={false} connecting />);
+    const { container } = render(<Avatar viseme="rest" speaking={false} connected={false} />);
 
     const wrapper = container.firstElementChild as HTMLElement;
     const shell = container.querySelector('.avatar-shell') as HTMLElement;
-    expect(shell).toHaveClass('connecting');
+    expect(shell).toBeTruthy();
 
     vi.spyOn(shell, 'getBoundingClientRect').mockReturnValue({
       x: 0,
