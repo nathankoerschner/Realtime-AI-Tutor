@@ -625,12 +625,6 @@ dev = [
     { name = "pytest-cov" },
 ]
 
-[package.dev-dependencies]
-dev = [
-    { name = "pytest" },
-    { name = "pytest-cov" },
-]
-
 [package.metadata]
 requires-dist = [
     { name = "aiohttp", specifier = ">=3.13.3" },
@@ -638,16 +632,10 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.28.0" },
     { name = "openai", specifier = ">=2.26.0" },
     { name = "pydantic", specifier = ">=2.11.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.0.2" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=7.0.0" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.35.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest", specifier = ">=9.0.2" },
-    { name = "pytest-cov", specifier = ">=7.0.0" },
 ]
 
 [[package]]

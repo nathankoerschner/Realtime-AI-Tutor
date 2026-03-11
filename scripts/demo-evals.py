@@ -113,7 +113,7 @@ async def demo_report_generation():
     }
     
     # Generate HTML report
-    output_path = Path("demo_report.html")
+    output_path = Path("backend/results/demo_report.html")
     EvalReportGenerator.generate_html_report(mock_results, output_path)
     
     print(f"   ✅ Generated report: {output_path}")
@@ -144,7 +144,7 @@ async def main():
         print("\nNext Steps:")
         print("  1. Start your backend: cd backend && uv run uvicorn app.main:app --reload")
         print("  2. Run real evaluations: python scripts/run-evals.py run")
-        print("  3. View generated report: open demo_report.html")
+        print("  3. View generated report: open backend/results/demo_report.html")
         print("  4. Read the docs: evals/README.md and evals/USAGE.md")
         
         return True
