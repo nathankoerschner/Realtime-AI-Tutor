@@ -13,6 +13,23 @@ function nextMessageId() {
   return `msg-${++messageIdCounter}`;
 }
 
+async function getErrorMessage(response: Response) {
+  const fallback = `Request failed with ${response.status}`;
+
+  try {
+    const contentType = response.headers?.get?.('content-type') ?? '';
+    if (contentType.includes('application/json')) {
+      const payload = await response.json() as { detail?: string };
+      return payload.detail ?? fallback;
+    }
+
+    const text = (await response.text()).trim();
+    return text || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export default function App() {
   const realtimeRef = useRef(new RealtimeClient());
   const visemeEngineRef = useRef(new StreamingVisemeEngine());
@@ -162,10 +179,18 @@ export default function App() {
     const wordCount = normalized.split(/\s+/).filter(Boolean).length;
     const speechDurationMs = lastUserSpeechDurationMsRef.current;
     const happenedDuringTutorSpeech = lastUserSpeechDuringTutorRef.current;
+    const hasLatinLetters = /[A-Za-z]/.test(normalized);
+    const hasNonLatinLetters = /[^\u0000-\u024F\s\d\p{P}\p{S}]/u.test(normalized);
 
     // Very short snippets detected while the tutor is already speaking are
     // usually speaker bleed / room noise rather than an intentional user turn.
     if (happenedDuringTutorSpeech && speechDurationMs < 1200 && wordCount <= 3) {
+      return true;
+    }
+
+    // We want English transcripts only. If the ASR returns non-Latin script
+    // without any Latin letters, treat it as a bad transcript and drop it.
+    if (hasNonLatinLetters && !hasLatinLetters) {
       return true;
     }
 
@@ -302,10 +327,14 @@ export default function App() {
         body: JSON.stringify({ student_level: 'grades 6-12' }),
       });
       if (!response.ok) {
-        throw new Error(await response.text());
+        throw new Error(await getErrorMessage(response));
       }
       const bootstrap = (await response.json()) as SessionBootstrap;
-      await realtimeRef.current.connect(bootstrap, handleRealtimeEvent, handleRemoteAudio);
+      await realtimeRef.current.connect(
+        bootstrap,
+        handleRealtimeEvent,
+        handleRemoteAudio,
+      );
 
       evaluator.markConnectionSuccess();
       setConnectionState('connected');

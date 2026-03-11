@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import random
 import time
 from typing import Any
 
@@ -11,9 +12,14 @@ from app.config import OPENAI_API_KEY, OPENAI_REALTIME_MODEL, TUTOR_INSTRUCTIONS
 from app.services.eval_logging import log_eval_event
 
 OPENAI_REALTIME_SESSIONS_URL = "https://api.openai.com/v1/realtime/sessions"
-OPENAI_REALTIME_INITIAL_TIMEOUT_SECONDS = 1.0
+OPENAI_REALTIME_CONNECT_TIMEOUT_SECONDS = 1.0
+OPENAI_REALTIME_INITIAL_READ_TIMEOUT_SECONDS = 5.0
+OPENAI_REALTIME_RETRY_READ_TIMEOUT_SECONDS = 3.0
+OPENAI_REALTIME_WRITE_TIMEOUT_SECONDS = 2.0
+OPENAI_REALTIME_POOL_TIMEOUT_SECONDS = 1.0
 OPENAI_REALTIME_MAX_ATTEMPTS = 3
-OPENAI_REALTIME_RETRY_BACKOFF_SECONDS = (0.5, 1.0)
+OPENAI_REALTIME_BACKOFF_BASE_SECONDS = (0.25, 0.75)
+OPENAI_REALTIME_RETRY_AFTER_MAX_SECONDS = 2.0
 RETRYABLE_STATUS_CODES = {408, 409, 429}
 
 
@@ -23,6 +29,33 @@ class OpenAISessionError(RuntimeError):
 
 def _should_retry_response(response: httpx.Response) -> bool:
     return response.status_code in RETRYABLE_STATUS_CODES or response.status_code >= 500
+
+
+def _retry_delay_seconds(attempt: int, response: httpx.Response | None = None) -> float:
+    if response is not None and response.status_code == 429:
+        retry_after = response.headers.get("Retry-After")
+        if retry_after:
+            try:
+                return min(float(retry_after), OPENAI_REALTIME_RETRY_AFTER_MAX_SECONDS)
+            except ValueError:
+                pass
+
+    base_delay = OPENAI_REALTIME_BACKOFF_BASE_SECONDS[attempt - 1]
+    return round(random.uniform(base_delay, base_delay + 0.5), 3)
+
+
+def _timeout_for_attempt(attempt: int) -> httpx.Timeout:
+    read_timeout = (
+        OPENAI_REALTIME_INITIAL_READ_TIMEOUT_SECONDS
+        if attempt == 1
+        else OPENAI_REALTIME_RETRY_READ_TIMEOUT_SECONDS
+    )
+    return httpx.Timeout(
+        connect=OPENAI_REALTIME_CONNECT_TIMEOUT_SECONDS,
+        read=read_timeout,
+        write=OPENAI_REALTIME_WRITE_TIMEOUT_SECONDS,
+        pool=OPENAI_REALTIME_POOL_TIMEOUT_SECONDS,
+    )
 
 
 async def create_realtime_session(
@@ -63,6 +96,8 @@ async def create_realtime_session(
         },
         "input_audio_transcription": {
             "model": "whisper-1",
+            "language": "en",
+            "prompt": "Transcribe spoken audio in English only. If the audio is unclear, return an empty transcript.",
         },
         "temperature": 0.7,
     }
@@ -77,9 +112,10 @@ async def create_realtime_session(
     response: httpx.Response | None = None
     attempts = 0
 
-    async with httpx.AsyncClient(timeout=OPENAI_REALTIME_INITIAL_TIMEOUT_SECONDS) as client:
-        for attempt in range(1, OPENAI_REALTIME_MAX_ATTEMPTS + 1):
-            attempts = attempt
+    for attempt in range(1, OPENAI_REALTIME_MAX_ATTEMPTS + 1):
+        attempts = attempt
+        timeout = _timeout_for_attempt(attempt)
+        async with httpx.AsyncClient(timeout=timeout) as client:
             try:
                 response = await client.post(
                     OPENAI_REALTIME_SESSIONS_URL,
@@ -87,13 +123,13 @@ async def create_realtime_session(
                     json=payload,
                 )
                 if response.is_error and _should_retry_response(response) and attempt < OPENAI_REALTIME_MAX_ATTEMPTS:
-                    await asyncio.sleep(OPENAI_REALTIME_RETRY_BACKOFF_SECONDS[attempt - 1])
+                    await asyncio.sleep(_retry_delay_seconds(attempt, response))
                     continue
                 break
             except RequestError as exc:
                 last_error = exc
                 if attempt < OPENAI_REALTIME_MAX_ATTEMPTS:
-                    await asyncio.sleep(OPENAI_REALTIME_RETRY_BACKOFF_SECONDS[attempt - 1])
+                    await asyncio.sleep(_retry_delay_seconds(attempt))
                     continue
 
     duration_ms = round((time.perf_counter() - started) * 1000, 2)
@@ -129,12 +165,14 @@ async def create_realtime_session(
     if response is None:
         detail = str(last_error) if last_error else "unknown transport error"
         raise OpenAISessionError(
-            f"OpenAI session creation failed after {attempts} attempts due to transport error: {detail}"
+            f"Couldn't connect to the realtime tutor after {attempts} attempts. Please try again. "
+            f"Last transport error: {detail}"
         )
 
     if response.is_error:
         raise OpenAISessionError(
-            f"OpenAI session creation failed after {attempts} attempts: {response.status_code} {response.text}"
+            f"Couldn't connect to the realtime tutor after {attempts} attempts. Please try again. "
+            f"Upstream returned {response.status_code}: {response.text}"
         )
 
     data = response.json()

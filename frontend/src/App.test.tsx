@@ -118,6 +118,15 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('Unable to start session'));
 
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({ detail: "Couldn't connect to the realtime tutor after 3 attempts. Please try again." }),
+    } as Response);
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent("Couldn't connect to the realtime tutor after 3 attempts. Please try again."));
+
     vi.mocked(fetch).mockResolvedValue({
       ok: true,
       json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
@@ -283,6 +292,29 @@ describe('App', () => {
     // Empty transcription removes the placeholder
     act(() => eventHandler({ type: 'conversation.item.input_audio_transcription.completed', transcript: '  ' }));
     expect(screen.queryByText('…')).not.toBeInTheDocument();
+  });
+
+  it('drops non-english transcription results', async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
+
+    let eventHandler: (event: any) => void;
+    mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any) => {
+      eventHandler = onEvent;
+    });
+
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    await waitFor(() => expect(mockConnect).toHaveBeenCalledOnce());
+
+    act(() => eventHandler({ type: 'input_audio_buffer.speech_started' }));
+    expect(screen.getByText('…')).toBeInTheDocument();
+
+    act(() => eventHandler({ type: 'conversation.item.input_audio_transcription.completed', transcript: 'الخيط.' }));
+    expect(screen.queryByText('…')).not.toBeInTheDocument();
+    expect(screen.queryByText('الخيط.')).not.toBeInTheDocument();
   });
 
   it('handles transcription.failed by showing fallback text', async () => {

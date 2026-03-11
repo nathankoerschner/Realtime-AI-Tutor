@@ -9,12 +9,29 @@ import app.services.openai_sessions as openai_sessions
 from app.services.openai_sessions import OpenAISessionError
 
 
+class HeaderMap:
+    def __init__(self, values: dict[str, str]):
+        self._values = values
+
+    def get(self, key: str):
+        return self._values.get(key)
+
+
 class DummyResponse:
-    def __init__(self, *, is_error: bool, status_code: int, text: str, payload: dict[str, Any] | None = None):
+    def __init__(
+        self,
+        *,
+        is_error: bool,
+        status_code: int,
+        text: str,
+        payload: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+    ):
         self.is_error = is_error
         self.status_code = status_code
         self.text = text
         self._payload = payload or {}
+        self.headers = headers or {}
 
     def json(self) -> dict[str, Any]:
         return self._payload
@@ -43,6 +60,41 @@ class DummyClient:
         return outcome
 
 
+class RetryAfterResponse:
+    def __init__(self, status_code: int, retry_after: str | None):
+        self.status_code = status_code
+        self.headers = HeaderMap({} if retry_after is None else {'Retry-After': retry_after})
+
+
+def test_retry_delay_seconds_prefers_retry_after_and_caps_it() -> None:
+    response = RetryAfterResponse(429, '9')
+
+    delay = openai_sessions._retry_delay_seconds(1, response)
+
+    assert delay == openai_sessions.OPENAI_REALTIME_RETRY_AFTER_MAX_SECONDS
+
+
+def test_retry_delay_seconds_uses_jitter_when_retry_after_missing_or_invalid(monkeypatch) -> None:
+    monkeypatch.setattr(openai_sessions.random, 'uniform', lambda start, end: 0.432)
+
+    missing_header_delay = openai_sessions._retry_delay_seconds(1, RetryAfterResponse(429, None))
+    invalid_header_delay = openai_sessions._retry_delay_seconds(2, RetryAfterResponse(429, 'nope'))
+
+    assert missing_header_delay == 0.432
+    assert invalid_header_delay == 0.432
+
+
+def test_timeout_for_attempt_uses_longer_first_read_timeout() -> None:
+    initial_timeout = openai_sessions._timeout_for_attempt(1)
+    retry_timeout = openai_sessions._timeout_for_attempt(2)
+
+    assert initial_timeout.connect == openai_sessions.OPENAI_REALTIME_CONNECT_TIMEOUT_SECONDS
+    assert initial_timeout.read == openai_sessions.OPENAI_REALTIME_INITIAL_READ_TIMEOUT_SECONDS
+    assert retry_timeout.read == openai_sessions.OPENAI_REALTIME_RETRY_READ_TIMEOUT_SECONDS
+    assert retry_timeout.write == openai_sessions.OPENAI_REALTIME_WRITE_TIMEOUT_SECONDS
+    assert retry_timeout.pool == openai_sessions.OPENAI_REALTIME_POOL_TIMEOUT_SECONDS
+
+
 @pytest.mark.anyio
 async def test_create_realtime_session_builds_payload_and_logs_metrics(monkeypatch) -> None:
     captured: dict[str, Any] = {}
@@ -65,6 +117,11 @@ async def test_create_realtime_session_builds_payload_and_logs_metrics(monkeypat
     assert captured['headers']['Authorization'] == 'Bearer test-key'
     assert captured['json']['model'] == 'test-model'
     assert captured['json']['voice'] == 'alloy'
+    assert captured['json']['input_audio_transcription'] == {
+        'model': 'whisper-1',
+        'language': 'en',
+        'prompt': 'Transcribe spoken audio in English only. If the audio is unclear, return an empty transcript.',
+    }
     assert 'Student level hint: grade 6.' in captured['json']['instructions']
     assert 'Opening topic hint from UI: fractions.' in captured['json']['instructions']
     assert data['client_secret']['value'] == 'secret'
@@ -88,12 +145,14 @@ async def test_create_realtime_session_retries_timeout_then_succeeds(monkeypatch
     sleeps: list[float] = []
 
     monkeypatch.setattr(openai_sessions, 'OPENAI_API_KEY', 'test-key')
+    client = DummyClient([httpx.ReadTimeout('timed out'), response], captured)
     monkeypatch.setattr(
         openai_sessions.httpx,
         'AsyncClient',
-        lambda timeout: DummyClient([httpx.ReadTimeout('timed out'), response], captured),
+        lambda timeout: client,
     )
     monkeypatch.setattr(openai_sessions, 'log_eval_event', lambda kind, payload: logs.append((kind, payload)))
+    monkeypatch.setattr(openai_sessions, '_retry_delay_seconds', lambda attempt, response=None: 0.5)
 
     async def fake_sleep(delay: float) -> None:
         sleeps.append(delay)
@@ -125,15 +184,20 @@ async def test_create_realtime_session_raises_and_logs_on_http_error(monkeypatch
     sleeps: list[float] = []
 
     monkeypatch.setattr(openai_sessions, 'OPENAI_API_KEY', 'test-key')
-    monkeypatch.setattr(openai_sessions.httpx, 'AsyncClient', lambda timeout: DummyClient([response, response, response], captured))
+    client = DummyClient([response, response, response], captured)
+    monkeypatch.setattr(openai_sessions.httpx, 'AsyncClient', lambda timeout: client)
     monkeypatch.setattr(openai_sessions, 'log_eval_event', lambda kind, payload: logs.append((kind, payload)))
+    monkeypatch.setattr(openai_sessions, '_retry_delay_seconds', lambda attempt, response=None: 0.5 if attempt == 1 else 1.0)
 
     async def fake_sleep(delay: float) -> None:
         sleeps.append(delay)
 
     monkeypatch.setattr(openai_sessions.asyncio, 'sleep', fake_sleep)
 
-    with pytest.raises(OpenAISessionError, match='OpenAI session creation failed after 3 attempts: 500 bad upstream'):
+    with pytest.raises(
+        OpenAISessionError,
+        match=r"Couldn't connect to the realtime tutor after 3 attempts\. Please try again\. Upstream returned 500: bad upstream",
+    ):
         await openai_sessions.create_realtime_session()
 
     assert captured['json']['instructions'] == openai_sessions.TUTOR_INSTRUCTIONS
@@ -151,26 +215,31 @@ async def test_create_realtime_session_raises_and_logs_on_transport_error(monkey
     sleeps: list[float] = []
 
     monkeypatch.setattr(openai_sessions, 'OPENAI_API_KEY', 'test-key')
+    client = DummyClient(
+        [
+            httpx.ReadTimeout('timed out'),
+            httpx.ReadTimeout('timed out again'),
+            httpx.ReadTimeout('timed out finally'),
+        ],
+        captured,
+    )
     monkeypatch.setattr(
         openai_sessions.httpx,
         'AsyncClient',
-        lambda timeout: DummyClient(
-            [
-                httpx.ReadTimeout('timed out'),
-                httpx.ReadTimeout('timed out again'),
-                httpx.ReadTimeout('timed out finally'),
-            ],
-            captured,
-        ),
+        lambda timeout: client,
     )
     monkeypatch.setattr(openai_sessions, 'log_eval_event', lambda kind, payload: logs.append((kind, payload)))
+    monkeypatch.setattr(openai_sessions, '_retry_delay_seconds', lambda attempt, response=None: 0.5 if attempt == 1 else 1.0)
 
     async def fake_sleep(delay: float) -> None:
         sleeps.append(delay)
 
     monkeypatch.setattr(openai_sessions.asyncio, 'sleep', fake_sleep)
 
-    with pytest.raises(OpenAISessionError, match='OpenAI session creation failed after 3 attempts due to transport error: timed out finally'):
+    with pytest.raises(
+        OpenAISessionError,
+        match=r"Couldn't connect to the realtime tutor after 3 attempts\. Please try again\. Last transport error: timed out finally",
+    ):
         await openai_sessions.create_realtime_session()
 
     assert captured['calls'] == 3

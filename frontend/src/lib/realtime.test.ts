@@ -100,12 +100,34 @@ describe('RealtimeClient', () => {
     expect(onEvent).toHaveBeenCalledWith({ type: 'error', error: 'bad' });
     expect(onEvent).toHaveBeenCalledWith({ type: 'response.text.delta', delta: 'hi' });
 
-    // connect sends 1 session.update for input_audio_transcription
     expect(peer.dataChannel.send).toHaveBeenCalledTimes(1);
+    expect(peer.dataChannel.send).toHaveBeenNthCalledWith(
+      1,
+      JSON.stringify({
+        type: 'session.update',
+        session: {
+          input_audio_transcription: {
+            model: 'whisper-1',
+            language: 'en',
+            prompt: 'Transcribe spoken audio in English only. If the audio is unclear, return an empty transcript.',
+          },
+          input_audio_noise_reduction: {
+            type: 'near_field',
+          },
+          turn_detection: {
+            type: 'server_vad',
+            threshold: 0.72,
+            prefix_padding_ms: 250,
+            silence_duration_ms: 700,
+            create_response: true,
+            interrupt_response: true,
+          },
+        },
+      }),
+    );
 
     client.setLocalMicMuted(true);
     client.sendTextMessage('hello');
-    // +2 for conversation.item.create + response.create
     expect(peer.dataChannel.send).toHaveBeenCalledTimes(3);
     expect(peer.addTrack).toHaveBeenCalled();
 
