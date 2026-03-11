@@ -13,7 +13,6 @@ load_dotenv(ROOT_DIR / ".env")
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_REALTIME_MODEL = os.getenv("OPENAI_REALTIME_MODEL", "gpt-4o-realtime-preview")
-OPENAI_TRANSCRIPT_NORMALIZER_MODEL = os.getenv("OPENAI_TRANSCRIPT_NORMALIZER_MODEL", "gpt-4.1-mini")
 APP_ENV = os.getenv("APP_ENV", "development")
 PORT = int(os.getenv("PORT", "8000"))
 EVAL_LOG_DIR = ROOT_DIR / os.getenv("EVAL_LOG_DIR", "evals/runs")

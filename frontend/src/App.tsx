@@ -30,21 +30,6 @@ async function getErrorMessage(response: Response) {
   }
 }
 
-async function normalizeTranscriptToEnglish(transcript: string) {
-  const response = await fetch('/api/realtime/normalize-transcript', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ transcript }),
-  });
-
-  if (!response.ok) {
-    throw new Error(await getErrorMessage(response));
-  }
-
-  const payload = await response.json() as { transcript?: string };
-  return payload.transcript?.trim() ?? '';
-}
-
 export default function App() {
   const realtimeRef = useRef(new RealtimeClient());
   const visemeEngineRef = useRef(new StreamingVisemeEngine());
@@ -194,6 +179,8 @@ export default function App() {
     const wordCount = normalized.split(/\s+/).filter(Boolean).length;
     const speechDurationMs = lastUserSpeechDurationMsRef.current;
     const happenedDuringTutorSpeech = lastUserSpeechDuringTutorRef.current;
+    const hasLatinLetters = /[A-Za-z]/.test(normalized);
+    const hasNonLatinLetters = /[^\u0000-\u024F\s\d\p{P}\p{S}]/u.test(normalized);
 
     // Very short snippets detected while the tutor is already speaking are
     // usually speaker bleed / room noise rather than an intentional user turn.
@@ -201,28 +188,13 @@ export default function App() {
       return true;
     }
 
-    return false;
-  }
-
-  async function resolveTranscriptToEnglish(transcript: string, itemId?: string) {
-    try {
-      const englishTranscript = await normalizeTranscriptToEnglish(transcript);
-      if (shouldIgnoreTranscript(englishTranscript)) {
-        removePendingUserMessage(itemId);
-      } else {
-        resolvePendingUserMessage(englishTranscript, itemId);
-      }
-    } catch (normalizationError) {
-      console.warn('[tutor] Transcript normalization failed', normalizationError);
-      if (shouldIgnoreTranscript(transcript)) {
-        removePendingUserMessage(itemId);
-      } else {
-        resolvePendingUserMessage(transcript, itemId);
-      }
-    } finally {
-      lastUserSpeechDurationMsRef.current = 0;
-      lastUserSpeechDuringTutorRef.current = false;
+    // We want English transcripts only. If the ASR returns non-Latin script
+    // without any Latin letters, treat it as a bad transcript and drop it.
+    if (hasNonLatinLetters && !hasLatinLetters) {
+      return true;
     }
+
+    return false;
   }
 
   // Start a new streaming assistant message and begin word reveal
@@ -470,7 +442,10 @@ export default function App() {
           break;
         }
 
-        void resolveTranscriptToEnglish(transcript, itemId);
+        // Fill in the placeholder with the actual transcript.
+        resolvePendingUserMessage(transcript, itemId);
+        lastUserSpeechDurationMsRef.current = 0;
+        lastUserSpeechDuringTutorRef.current = false;
         break;
       }
       case 'conversation.item.input_audio_transcription.failed': {

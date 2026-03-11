@@ -7,10 +7,6 @@ from pydantic import BaseModel
 
 from app.services.eval_logging import log_eval_event
 from app.services.openai_sessions import OpenAISessionError, create_realtime_session
-from app.services.transcript_normalization import (
-    TranscriptNormalizationError,
-    normalize_transcript_to_english,
-)
 
 router = APIRouter(prefix="/api/realtime", tags=["realtime"])
 
@@ -19,10 +15,6 @@ class SessionRequest(BaseModel):
     topic_hint: str | None = None
     student_level: str | None = None
     eval_run_id: str | None = None
-
-
-class TranscriptNormalizationRequest(BaseModel):
-    transcript: str
 
 
 @router.post("/session")
@@ -55,12 +47,4 @@ async def create_session(payload: SessionRequest) -> dict:
                 "error": str(exc),
             },
         )
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
-
-
-@router.post("/normalize-transcript")
-async def normalize_transcript(payload: TranscriptNormalizationRequest) -> dict[str, str]:
-    try:
-        return {"transcript": await normalize_transcript_to_english(payload.transcript)}
-    except TranscriptNormalizationError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc

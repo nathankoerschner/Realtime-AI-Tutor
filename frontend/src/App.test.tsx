@@ -58,38 +58,6 @@ describe('App', () => {
     Element.prototype.scrollIntoView = vi.fn();
   });
 
-  function mockSessionAndNormalization(normalizedTranscripts: Record<string, string> = {}) {
-    vi.mocked(fetch).mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
-
-      if (url === '/api/realtime/session') {
-        return {
-          ok: true,
-          json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
-        } as Response;
-      }
-
-      if (url === '/api/realtime/normalize-transcript') {
-        const payload = JSON.parse(String(init?.body ?? '{}')) as { transcript?: string };
-        const transcript = payload.transcript ?? '';
-        return {
-          ok: true,
-          json: async () => ({ transcript: normalizedTranscripts[transcript] ?? transcript }),
-        } as Response;
-      }
-
-      if (url === '/api/evals/client-events') {
-        return {
-          ok: true,
-          json: async () => ({ ok: true }),
-          text: async () => 'ok',
-        } as Response;
-      }
-
-      throw new Error(`Unexpected fetch: ${url}`);
-    });
-  }
-
   it('starts a session, handles remote audio and realtime events, and supports lesson/topic actions', async () => {
     vi.mocked(fetch).mockResolvedValue({
       ok: true,
@@ -211,7 +179,10 @@ describe('App', () => {
   it('exercises map else-branches by having multiple messages during resolve/reveal/finalize', async () => {
     vi.useFakeTimers();
 
-    mockSessionAndNormalization();
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
 
     let eventHandler: (event: any) => void;
     let audioSnapshotHandler: (snapshot: any) => void;
@@ -242,9 +213,6 @@ describe('App', () => {
     act(() => eventHandler({ type: 'input_audio_buffer.speech_started' }));
     // Resolve it — the map will iterate over 'first question' (no match) and pending (match)
     act(() => eventHandler({ type: 'conversation.item.input_audio_transcription.completed', transcript: 'spoken question' }));
-    await act(async () => {
-      await Promise.resolve();
-    });
     expect(screen.getByText('spoken question')).toBeInTheDocument();
     expect(screen.getByText('first question')).toBeInTheDocument();
 
@@ -265,7 +233,10 @@ describe('App', () => {
   });
 
   it('handles speech_started → transcription.completed flow with pending user message', async () => {
-    mockSessionAndNormalization();
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
 
     let eventHandler: (event: any) => void;
     mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any) => {
@@ -296,12 +267,15 @@ describe('App', () => {
       item_id: 'item-1',
       transcript: 'Hello tutor',
     }));
-    await waitFor(() => expect(screen.getByText('Hello tutor')).toBeInTheDocument());
+    expect(screen.getByText('Hello tutor')).toBeInTheDocument();
     expect(screen.queryByText('…')).not.toBeInTheDocument();
   });
 
   it('handles empty transcription by removing pending message', async () => {
-    mockSessionAndNormalization({ '  ': '' });
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
 
     let eventHandler: (event: any) => void;
     mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any) => {
@@ -317,11 +291,14 @@ describe('App', () => {
 
     // Empty transcription removes the placeholder
     act(() => eventHandler({ type: 'conversation.item.input_audio_transcription.completed', transcript: '  ' }));
-    await waitFor(() => expect(screen.queryByText('…')).not.toBeInTheDocument());
+    expect(screen.queryByText('…')).not.toBeInTheDocument();
   });
 
-  it('normalizes foreign-language transcription results to english', async () => {
-    mockSessionAndNormalization({ 'Sao hezkého.': 'something nice', 'الخيط.': '' });
+  it('drops non-english transcription results', async () => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
 
     let eventHandler: (event: any) => void;
     mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any) => {
@@ -335,15 +312,8 @@ describe('App', () => {
     act(() => eventHandler({ type: 'input_audio_buffer.speech_started' }));
     expect(screen.getByText('…')).toBeInTheDocument();
 
-    act(() => eventHandler({ type: 'conversation.item.input_audio_transcription.completed', transcript: 'Sao hezkého.' }));
-    await waitFor(() => expect(screen.getByText('something nice')).toBeInTheDocument());
-    expect(screen.queryByText('Sao hezkého.')).not.toBeInTheDocument();
-
-    act(() => eventHandler({ type: 'input_audio_buffer.speech_started' }));
-    expect(screen.getByText('…')).toBeInTheDocument();
-
     act(() => eventHandler({ type: 'conversation.item.input_audio_transcription.completed', transcript: 'الخيط.' }));
-    await waitFor(() => expect(screen.queryByText('…')).not.toBeInTheDocument());
+    expect(screen.queryByText('…')).not.toBeInTheDocument();
     expect(screen.queryByText('الخيط.')).not.toBeInTheDocument();
   });
 
@@ -368,7 +338,10 @@ describe('App', () => {
   });
 
   it('handles transcription.completed without a pending message (fallback path)', async () => {
-    mockSessionAndNormalization();
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
 
     let eventHandler: (event: any) => void;
     mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any) => {
@@ -381,11 +354,14 @@ describe('App', () => {
 
     // No speech_started first — fallback addUserMessage path
     act(() => eventHandler({ type: 'conversation.item.input_audio_transcription.completed', transcript: 'Surprise!' }));
-    await waitFor(() => expect(screen.getByText('Surprise!')).toBeInTheDocument());
+    expect(screen.getByText('Surprise!')).toBeInTheDocument();
   });
 
   it('binds transcript events to the matching conversation item id', async () => {
-    mockSessionAndNormalization();
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
 
     let eventHandler: (event: any) => void;
     mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any) => {
@@ -410,12 +386,15 @@ describe('App', () => {
       transcript: 'hey there',
     }));
 
-    await waitFor(() => expect(screen.getByText('hey there')).toBeInTheDocument());
+    expect(screen.getByText('hey there')).toBeInTheDocument();
     expect(screen.queryByText('…')).not.toBeInTheDocument();
   });
 
   it('handles removePendingUserMessage when no pending message exists', async () => {
-    mockSessionAndNormalization({ '': '' });
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
+    } as Response);
 
     let eventHandler: (event: any) => void;
     mockConnect.mockImplementation(async (_bootstrap: any, onEvent: any) => {

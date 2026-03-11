@@ -3,7 +3,6 @@ from fastapi.testclient import TestClient
 from app.main import app
 import app.routes.realtime as realtime
 from app.services.openai_sessions import OpenAISessionError
-from app.services.transcript_normalization import TranscriptNormalizationError
 
 client = TestClient(app)
 
@@ -49,28 +48,3 @@ def test_create_session_converts_openai_session_errors_to_http_500(monkeypatch) 
     assert logged[0][0] == 'backend_session_metrics'
     assert logged[0][1]['ok'] is False
     assert logged[0][1]['error'] == 'boom'
-
-
-def test_normalize_transcript_returns_english_text(monkeypatch) -> None:
-    async def fake_normalize_transcript_to_english(transcript: str) -> str:
-        assert transcript == 'Sao hezkého.'
-        return 'something nice'
-
-    monkeypatch.setattr(realtime, 'normalize_transcript_to_english', fake_normalize_transcript_to_english)
-
-    response = client.post('/api/realtime/normalize-transcript', json={'transcript': 'Sao hezkého.'})
-
-    assert response.status_code == 200
-    assert response.json() == {'transcript': 'something nice'}
-
-
-def test_normalize_transcript_converts_errors_to_http_500(monkeypatch) -> None:
-    async def fake_normalize_transcript_to_english(_transcript: str) -> str:
-        raise TranscriptNormalizationError('bad normalize')
-
-    monkeypatch.setattr(realtime, 'normalize_transcript_to_english', fake_normalize_transcript_to_english)
-
-    response = client.post('/api/realtime/normalize-transcript', json={'transcript': 'x'})
-
-    assert response.status_code == 500
-    assert response.json() == {'detail': 'bad normalize'}
