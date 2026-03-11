@@ -10,8 +10,8 @@ const mockDispose = vi.fn();
 const mockResetSpeechFrameFlag = vi.fn();
 
 vi.mock('./components/Avatar/Avatar', () => ({
-  Avatar: ({ viseme, speaking, connected }: Record<string, unknown>) => (
-    <div data-testid="avatar">{JSON.stringify({ viseme, speaking, connected })}</div>
+  Avatar: ({ speaking, connected }: Record<string, unknown>) => (
+    <div data-testid="avatar">{JSON.stringify({ speaking, connected })}</div>
   ),
 }));
 
@@ -35,7 +35,7 @@ vi.mock('./lib/realtime', () => ({
 }));
 
 vi.mock('./lib/audio', () => ({
-  StreamingVisemeEngine: class {
+  StreamingAudioEngine: class {
     attachToMediaStream = mockAttachToMediaStream;
     dispose = mockDispose;
     resetSpeechFrameFlag = mockResetSpeechFrameFlag;
@@ -66,7 +66,7 @@ describe('App', () => {
 
     mockConnect.mockImplementation(async (_bootstrap, onEvent, onRemoteTrack) => {
       mockAttachToMediaStream.mockImplementation(async (_stream, onSnapshot) => {
-        onSnapshot({ viseme: 'ai', speaking: true, level: 0.4, timestamp: 1 });
+        onSnapshot({ speaking: true, level: 0.4, timestamp: 1 });
       });
       await onRemoteTrack({} as HTMLAudioElement, {} as MediaStream);
       onEvent({ type: 'input_audio_buffer.speech_stopped' });
@@ -81,7 +81,6 @@ describe('App', () => {
     expect(mockAttachToMediaStream).toHaveBeenCalled();
     expect(mockResetSpeechFrameFlag).toHaveBeenCalled();
     expect(screen.getByRole('alert')).toHaveTextContent('{"code":"bad"}');
-    expect(screen.getByTestId('avatar')).toHaveTextContent('"viseme":"ai"');
     expect(screen.getByTestId('avatar')).toHaveTextContent('"speaking":true');
 
     fireEvent.click(screen.getByRole('button', { name: /Learn about linear equations/i }));
@@ -199,7 +198,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'rest', speaking: false, level: 0, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: false, level: 0, timestamp: 1 }));
 
     // First, send a typed user message so there are multiple messages in state
     const chatInput = screen.getByPlaceholderText('Type a message…');
@@ -217,7 +216,7 @@ describe('App', () => {
     expect(screen.getByText('first question')).toBeInTheDocument();
 
     // Now stream an assistant response — there are already 2 user messages in state
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 2 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 2 }));
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Answer here' }));
     // Advance to reveal words — map iterates over non-matching messages too
     act(() => vi.advanceTimersByTime(150 * 20));
@@ -435,7 +434,7 @@ describe('App', () => {
     });
 
     // Simulate speaking state so word reveal advances
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 1 }));
 
     // Delta events buffer text
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Hello ' }));
@@ -476,7 +475,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 1 }));
 
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Test' }));
     // response.done without transcript.done — should still finalize
@@ -511,7 +510,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 1 }));
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Hello there friend' }));
 
     // Let only the first spoken chunk become visible.
@@ -554,7 +553,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 1 }));
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Original answer' }));
     act(() => vi.advanceTimersByTime(150));
 
@@ -567,7 +566,7 @@ describe('App', () => {
     act(() => eventHandler({ type: 'response.done' }));
 
     // Before the transcript resolves, the tutor starts a new reply.
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 2 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 2 }));
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Follow up answer' }));
     act(() => eventHandler({ type: 'response.audio_transcript.done' }));
     act(() => vi.advanceTimersByTime(150 * 10));
@@ -614,7 +613,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 1 }));
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Original answer' }));
     act(() => vi.advanceTimersByTime(150));
 
@@ -629,7 +628,7 @@ describe('App', () => {
     // The prior interrupted response may still emit cleanup events, then the tutor replies again.
     act(() => eventHandler({ type: 'response.audio_transcript.done' }));
     act(() => eventHandler({ type: 'response.done' }));
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 2 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 2 }));
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Follow up answer' }));
     act(() => eventHandler({ type: 'response.audio_transcript.done' }));
     act(() => vi.advanceTimersByTime(150 * 10));
@@ -664,7 +663,7 @@ describe('App', () => {
       expect(text).toBe('Typed interruption');
       // Simulate the backend starting the next response immediately, before the
       // submit handler has fully unwound.
-      audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 2 });
+      audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 2 });
       eventHandler({ type: 'response.audio_transcript.delta', delta: 'Immediate follow up' });
       eventHandler({ type: 'response.audio_transcript.done' });
     });
@@ -674,7 +673,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 1 }));
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Original answer' }));
     act(() => vi.advanceTimersByTime(150));
 
@@ -737,7 +736,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 1 }));
 
     // Delta without prior startAssistantMessage — bufferTranscriptDelta auto-starts
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Auto' }));
@@ -773,7 +772,7 @@ describe('App', () => {
     });
 
     // Not speaking
-    act(() => audioSnapshotHandler({ viseme: 'rest', speaking: false, level: 0, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: false, level: 0, timestamp: 1 }));
 
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Hello world' }));
 
@@ -830,7 +829,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 1 }));
 
     // Start and immediately finalize an assistant message
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Done' }));
@@ -870,7 +869,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 1 }));
 
     // Short message — just one word so it gets fully revealed before done is called
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'Hi' }));
@@ -910,7 +909,7 @@ describe('App', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Start' }));
     });
 
-    act(() => audioSnapshotHandler({ viseme: 'ai', speaking: true, level: 0.5, timestamp: 1 }));
+    act(() => audioSnapshotHandler({ speaking: true, level: 0.5, timestamp: 1 }));
 
     // Short text
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: 'X' }));

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { StreamingVisemeEngine } from './audio';
+import { StreamingAudioEngine } from './audio';
 
-describe('StreamingVisemeEngine', () => {
+describe('StreamingAudioEngine', () => {
   it('attaches to a media stream, emits snapshots, and fires first-frame once per speech window', async () => {
     const disconnect = vi.fn();
     const close = vi.fn().mockResolvedValue(undefined);
@@ -43,8 +43,8 @@ describe('StreamingVisemeEngine', () => {
       },
     );
 
-    const engine = new StreamingVisemeEngine();
-    const snapshots: Array<{ speaking: boolean; viseme: string }> = [];
+    const engine = new StreamingAudioEngine();
+    const snapshots: Array<{ speaking: boolean; level: number }> = [];
     const firstFrame = vi.fn();
 
     await engine.attachToMediaStream({} as MediaStream, (snapshot) => snapshots.push(snapshot), firstFrame);
@@ -54,7 +54,7 @@ describe('StreamingVisemeEngine', () => {
     expect(resume).toHaveBeenCalled();
     expect(source.connect).toHaveBeenCalledWith(analyser);
     expect(snapshots[0]?.speaking).toBe(true);
-    expect(snapshots.some((snapshot) => snapshot.viseme === 'rest')).toBe(true);
+    expect(snapshots.some((snapshot) => snapshot.speaking === false)).toBe(true);
     expect(firstFrame).toHaveBeenCalledTimes(1);
 
     engine.resetSpeechFrameFlag();

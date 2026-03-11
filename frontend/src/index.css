@@ -373,6 +373,7 @@ h1 {
   justify-self: center;
   width: clamp(240px, 42vw, 520px);
   max-width: min(100%, 520px);
+  aspect-ratio: 1;
   padding: 1rem;
   border-radius: 28px;
   background: transparent;
@@ -399,8 +400,18 @@ h1 {
 
 .avatar-svg {
   width: 100%;
+  height: auto;
   display: block;
   overflow: visible;
+}
+
+.avatar-wrapper-mobile {
+  transform: none !important;
+}
+
+.avatar-shell-mobile {
+  animation: none;
+  filter: none;
 }
 
 
@@ -666,5 +677,12 @@ button.muted-active {
   .lesson-topic-button {
     font-size: 0.78rem;
     padding: 0.5rem 0.8rem;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .avatar-shell {
+    width: min(74vw, 320px);
+    padding: 0.4rem;
   }
 }
