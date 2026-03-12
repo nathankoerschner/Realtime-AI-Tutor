@@ -406,15 +406,6 @@ h1 {
   overflow: visible;
 }
 
-.avatar-wrapper-mobile {
-  transform: none !important;
-}
-
-.avatar-shell-mobile {
-  animation: none;
-  filter: none;
-}
-
 
 .chat-topic-suggestions {
   display: flex;
@@ -739,6 +730,10 @@ button.hold-snap {
 
   .session-controls {
     flex-direction: row;
+  }
+
+  .chat-topic-suggestions {
+    display: none;
   }
 }
 

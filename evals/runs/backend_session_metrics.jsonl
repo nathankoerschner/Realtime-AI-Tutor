@@ -102,3 +102,8 @@
 {"timestamp": "2026-03-12T12:47:22.807617+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 524.96, "topic_hint": null, "student_level": "grades 6-12"}
 {"timestamp": "2026-03-12T12:47:46.929667+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 467.51, "topic_hint": null, "student_level": "grades 6-12"}
 {"timestamp": "2026-03-12T12:49:49.904372+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 222.59, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-12T14:33:34.641326+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 543.82, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-12T15:52:48.885680+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 774.73, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-12T15:54:13.943784+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 440.39, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-12T15:54:28.851345+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 187.9, "topic_hint": null, "student_level": "grades 6-12"}
+{"timestamp": "2026-03-12T15:54:44.617641+00:00", "eval_run_id": null, "route": "/api/realtime/session", "ok": true, "duration_ms": 565.02, "topic_hint": null, "student_level": "grades 6-12"}

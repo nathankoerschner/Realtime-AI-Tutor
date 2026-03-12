@@ -20,20 +20,16 @@ const mouths: Record<VisemeKey, string> = {
   etc: 'M 108 139 C 112 147 117 150 120 150 C 123 150 128 147 132 139 C 126 142 120 143 120 143 C 120 143 114 142 108 139',
 };
 
-// Memoized cloud body — never re-renders, so SVG <animate> timelines stay stable
 const CloudBody = memo(function CloudBody() {
   return (
     <>
       <defs>
-        {/* Heavy blur for cloud blobs */}
         <filter id="cloudBlur" x="-100%" y="-100%" width="300%" height="300%">
           <feGaussianBlur in="SourceGraphic" stdDeviation="28" />
         </filter>
-        {/* Lighter blur for inner glow layer */}
         <filter id="innerBlur" x="-80%" y="-80%" width="260%" height="260%">
           <feGaussianBlur in="SourceGraphic" stdDeviation="18" />
         </filter>
-        {/* Radial fade for each color blob — vivid centers, wide reach */}
         <radialGradient id="blobGold" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#f5c26b" stopOpacity="1" />
           <stop offset="45%" stopColor="#f5c26b" stopOpacity="0.7" />
@@ -72,7 +68,6 @@ const CloudBody = memo(function CloudBody() {
         </radialGradient>
       </defs>
 
-      {/* Animated cloud body — 6 blobs orbit around a circle at different speeds */}
       <g filter="url(#cloudBlur)">
         <ellipse rx="105" ry="98" fill="url(#blobGold)">
           <animate attributeName="cx" values="120;180;180;120;62;62;120" dur="24s" repeatCount="indefinite" />
@@ -117,42 +112,8 @@ const CloudBody = memo(function CloudBody() {
   );
 });
 
-const SimpleCloudBody = memo(function SimpleCloudBody() {
-  return (
-    <>
-      <defs>
-        <radialGradient id="mobileBlobGold" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#f5c26b" stopOpacity="0.95" />
-          <stop offset="100%" stopColor="#f5c26b" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id="mobileBlobPink" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#e8689a" stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#e8689a" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id="mobileBlobPurple" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#9b6bcd" stopOpacity="0.85" />
-          <stop offset="100%" stopColor="#9b6bcd" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id="mobileBlobBlue" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#53d5ff" stopOpacity="0.82" />
-          <stop offset="100%" stopColor="#53d5ff" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-
-      <g opacity="0.95">
-        <circle cx="118" cy="112" r="108" fill="url(#mobileBlobPurple)" />
-        <circle cx="84" cy="102" r="78" fill="url(#mobileBlobGold)" />
-        <circle cx="154" cy="94" r="74" fill="url(#mobileBlobPink)" />
-        <circle cx="146" cy="148" r="84" fill="url(#mobileBlobBlue)" />
-        <circle cx="94" cy="154" r="72" fill="url(#mobileBlobPink)" opacity="0.7" />
-      </g>
-    </>
-  );
-});
-
 export function Avatar({ viseme, speaking, connected }: AvatarProps) {
   const [blinking, setBlinking] = useState(false);
-  const [useSimpleMobileBody, setUseSimpleMobileBody] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -169,20 +130,6 @@ export function Avatar({ viseme, speaking, connected }: AvatarProps) {
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
-
-    const coarsePointerQuery = window.matchMedia('(pointer: coarse), (hover: none)');
-    const updateMode = () => setUseSimpleMobileBody(coarsePointerQuery.matches);
-
-    updateMode();
-    coarsePointerQuery.addEventListener?.('change', updateMode);
-
-    return () => coarsePointerQuery.removeEventListener?.('change', updateMode);
-  }, []);
-
-  useEffect(() => {
-    if (useSimpleMobileBody) return;
-
     const wrapper = wrapperRef.current;
     /* v8 ignore next -- React sets the ref before this client effect runs */
     if (!wrapper) return;
@@ -238,25 +185,21 @@ export function Avatar({ viseme, speaking, connected }: AvatarProps) {
       document.removeEventListener('mouseleave', handleMouseLeave);
       cancelAnimationFrame(rafId);
     };
-  }, [useSimpleMobileBody]);
-
-  const Body = useSimpleMobileBody ? SimpleCloudBody : CloudBody;
+  }, []);
 
   return (
-    <div ref={wrapperRef} className={useSimpleMobileBody ? 'avatar-wrapper avatar-wrapper-mobile' : 'avatar-wrapper'}>
-      <div className={`avatar-shell ${speaking ? 'speaking' : ''} ${connected ? 'connected' : ''} ${useSimpleMobileBody ? 'avatar-shell-mobile' : ''}`}>
+    <div ref={wrapperRef} className="avatar-wrapper">
+      <div className={`avatar-shell ${speaking ? 'speaking' : ''} ${connected ? 'connected' : ''}`}>
         <svg
           viewBox="-80 -80 400 400"
           className="avatar-svg"
           aria-label="Tutor avatar"
           preserveAspectRatio="xMidYMid meet"
         >
-          <Body />
+          <CloudBody />
 
           <g>
-            {!useSimpleMobileBody && (
-              <animateTransform attributeName="transform" type="translate" values="0,0;6,-4;-3,5;4,3;-5,-2;0,0" dur="18s" repeatCount="indefinite" />
-            )}
+            <animateTransform attributeName="transform" type="translate" values="0,0;6,-4;-3,5;4,3;-5,-2;0,0" dur="18s" repeatCount="indefinite" />
             {blinking ? (
               <>
                 <path d="M 89 108 C 94 112 106 112 111 108" stroke="#1a1025" strokeWidth="3" fill="none" strokeLinecap="round" />
