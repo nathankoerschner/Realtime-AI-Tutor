@@ -1929,3 +1929,23 @@
 {"timestamp": "2026-03-12T12:30:48.578453+00:00", "source": "frontend", "eval_run_id": "eval_1773318570154_k6jdectn", "name": "user_speech_duration", "at_ms": 19917.7, "meta": {"duration_ms": 2846.2}}
 {"timestamp": "2026-03-12T12:30:48.578499+00:00", "source": "frontend", "eval_run_id": "eval_1773318570154_k6jdectn", "name": "user_speech_end", "at_ms": 19917.7, "meta": {}}
 {"timestamp": "2026-03-12T12:30:48.578534+00:00", "source": "frontend", "eval_run_id": "eval_1773318570154_k6jdectn", "name": "tutor_response_end", "at_ms": 21216.1, "meta": {}}
+{"timestamp": "2026-03-12T15:59:18.931914+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "session_start", "at_ms": 6964.9, "meta": {}}
+{"timestamp": "2026-03-12T15:59:18.932524+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_attempt", "at_ms": 6965.0, "meta": {}}
+{"timestamp": "2026-03-12T15:59:18.932694+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "first_audio_frame", "at_ms": 7903.1, "meta": {}}
+{"timestamp": "2026-03-12T15:59:18.932793+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_duration", "at_ms": 8023.7, "meta": {"duration_ms": 1058.7}}
+{"timestamp": "2026-03-12T15:59:18.932875+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_success", "at_ms": 8023.7, "meta": {}}
+{"timestamp": "2026-03-12T15:59:24.006584+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "session_start", "at_ms": 6964.9, "meta": {}}
+{"timestamp": "2026-03-12T15:59:24.006934+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_attempt", "at_ms": 6965.0, "meta": {}}
+{"timestamp": "2026-03-12T15:59:24.007106+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "first_audio_frame", "at_ms": 7903.1, "meta": {}}
+{"timestamp": "2026-03-12T15:59:24.007265+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_duration", "at_ms": 8023.7, "meta": {"duration_ms": 1058.7}}
+{"timestamp": "2026-03-12T15:59:24.007386+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_success", "at_ms": 8023.7, "meta": {}}
+{"timestamp": "2026-03-12T15:59:42.715441+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "session_start", "at_ms": 6964.9, "meta": {}}
+{"timestamp": "2026-03-12T15:59:42.715859+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_attempt", "at_ms": 6965.0, "meta": {}}
+{"timestamp": "2026-03-12T15:59:42.715913+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "first_audio_frame", "at_ms": 7903.1, "meta": {}}
+{"timestamp": "2026-03-12T15:59:42.715957+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_duration", "at_ms": 8023.7, "meta": {"duration_ms": 1058.7}}
+{"timestamp": "2026-03-12T15:59:42.715992+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_success", "at_ms": 8023.7, "meta": {}}
+{"timestamp": "2026-03-12T16:02:04.041200+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "session_start", "at_ms": 6964.9, "meta": {}}
+{"timestamp": "2026-03-12T16:02:04.041814+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_attempt", "at_ms": 6965.0, "meta": {}}
+{"timestamp": "2026-03-12T16:02:04.042042+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "first_audio_frame", "at_ms": 7903.1, "meta": {}}
+{"timestamp": "2026-03-12T16:02:04.042133+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_duration", "at_ms": 8023.7, "meta": {"duration_ms": 1058.7}}
+{"timestamp": "2026-03-12T16:02:04.042225+00:00", "source": "frontend", "eval_run_id": "eval_1773330877081_mt5suqnj", "name": "connection_success", "at_ms": 8023.7, "meta": {}}

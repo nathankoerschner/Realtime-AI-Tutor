@@ -41,6 +41,43 @@ class MockAudio {
   pause = vi.fn();
 }
 
+type MockTrack = {
+  enabled: boolean;
+  label: string;
+  stop: ReturnType<typeof vi.fn>;
+  getSettings: () => { deviceId: string };
+};
+
+function createTrack(label: string, deviceId: string): MockTrack {
+  return {
+    enabled: true,
+    label,
+    stop: vi.fn(),
+    getSettings: () => ({ deviceId }),
+  };
+}
+
+function createStream(track: MockTrack): MediaStream {
+  return {
+    getAudioTracks: () => [track as unknown as MediaStreamTrack],
+    getTracks: () => [track as unknown as MediaStreamTrack],
+  } as MediaStream;
+}
+
+async function openConnection(client: RealtimeClient, bootstrap = { client_secret: { value: 'ephemeral' }, model: 'gpt-test' }) {
+  const connectPromise = client.connect(bootstrap, vi.fn(), vi.fn());
+  const peer = MockPeerConnection.instances.at(-1)!;
+
+  for (let attempt = 0; attempt < 20 && !peer.dataChannel.onopen; attempt += 1) {
+    await Promise.resolve();
+  }
+
+  peer.dataChannel.readyState = 'open';
+  peer.dataChannel.onopen?.();
+  await connectPromise;
+  return peer;
+}
+
 describe('RealtimeClient', () => {
   beforeEach(() => {
     MockPeerConnection.instances.length = 0;
@@ -52,17 +89,86 @@ describe('RealtimeClient', () => {
       vi.fn(async () => ({ ok: true, text: async () => 'answer-sdp', status: 200 })),
     );
 
-    const track = { enabled: true, stop: vi.fn() };
-    const localStream = {
-      getAudioTracks: () => [track],
-      getTracks: () => [track],
-    };
+    const builtInTrack = createTrack('Built-in Microphone', 'built-in');
+    const getUserMedia = vi.fn(async () => createStream(builtInTrack));
+    const enumerateDevices = vi.fn(async () => ([
+      { kind: 'audioinput', deviceId: 'continuity', label: 'iPhone Microphone' },
+      { kind: 'audioinput', deviceId: 'built-in', label: 'Built-in Microphone' },
+    ]));
+
     Object.defineProperty(globalThis.navigator, 'mediaDevices', {
       configurable: true,
       value: {
-        getUserMedia: vi.fn(async () => localStream),
+        getUserMedia,
+        enumerateDevices,
       },
     });
+  });
+
+  it('prefers a non-continuity microphone when labeled devices are available', async () => {
+    const client = new RealtimeClient();
+
+    await openConnection(client);
+
+    expect(navigator.mediaDevices.enumerateDevices).toHaveBeenCalled();
+    expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
+      audio: {
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        deviceId: { exact: 'built-in' },
+      },
+    });
+  });
+
+  it('replaces a continuity mic after fallback acquisition when a better device appears', async () => {
+    const continuityTrack = createTrack('iPhone Microphone', 'continuity');
+    const builtInTrack = createTrack('Built-in Microphone', 'built-in');
+    const getUserMedia = vi
+      .fn<() => Promise<MediaStream>>()
+      .mockResolvedValueOnce(createStream(continuityTrack))
+      .mockResolvedValueOnce(createStream(builtInTrack));
+    const enumerateDevices = vi
+      .fn<() => Promise<MediaDeviceInfo[]>>()
+      .mockResolvedValueOnce([
+        { kind: 'audioinput', deviceId: 'default', label: '' } as MediaDeviceInfo,
+      ])
+      .mockResolvedValueOnce([
+        { kind: 'audioinput', deviceId: 'continuity', label: 'iPhone Microphone' } as MediaDeviceInfo,
+        { kind: 'audioinput', deviceId: 'built-in', label: 'Built-in Microphone' } as MediaDeviceInfo,
+      ]);
+
+    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
+      configurable: true,
+      value: {
+        getUserMedia,
+        enumerateDevices,
+      },
+    });
+
+    const client = new RealtimeClient();
+    const peer = await openConnection(client);
+
+    expect(getUserMedia).toHaveBeenNthCalledWith(1, {
+      audio: {
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+      },
+    });
+    expect(getUserMedia).toHaveBeenNthCalledWith(2, {
+      audio: {
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        deviceId: { exact: 'built-in' },
+      },
+    });
+    expect(continuityTrack.stop).toHaveBeenCalled();
+    expect(peer.addTrack).toHaveBeenCalledWith(expect.objectContaining({ label: 'Built-in Microphone' }), expect.any(Object));
   });
 
   it('connects, handles remote tracks, sends text, interrupts responses, mutes, and disconnects', async () => {
@@ -76,9 +182,10 @@ describe('RealtimeClient', () => {
       onRemoteTrack,
     );
 
-    await Promise.resolve();
-    await Promise.resolve();
     const peer = MockPeerConnection.instances[0]!;
+    for (let attempt = 0; attempt < 20 && !peer.dataChannel.onopen; attempt += 1) {
+      await Promise.resolve();
+    }
     peer.dataChannel.readyState = 'open';
     peer.dataChannel.onopen?.();
     await connectPromise;
@@ -152,8 +259,15 @@ describe('RealtimeClient', () => {
       vi.fn(async () => ({ ok: false, status: 401, text: async () => 'denied' })),
     );
 
-    const connectPromise = failingClient.connect({ client_secret: { value: 'ephemeral' }, session_config: { model: 'fallback-model' } }, vi.fn(), vi.fn());
+    const connectPromise = failingClient.connect(
+      { client_secret: { value: 'ephemeral' }, session_config: { model: 'fallback-model' } },
+      vi.fn(),
+      vi.fn(),
+    );
     const peer = MockPeerConnection.instances.at(-1)!;
+    for (let attempt = 0; attempt < 20 && !peer.dataChannel.onopen; attempt += 1) {
+      await Promise.resolve();
+    }
     peer.dataChannel.readyState = 'open';
     peer.dataChannel.onopen?.();
     await expect(connectPromise).rejects.toThrow('Realtime connection failed: 401 denied');

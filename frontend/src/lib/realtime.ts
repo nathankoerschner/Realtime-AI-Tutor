@@ -19,6 +19,12 @@ export class RealtimeClient {
   private analyserNode?: AnalyserNode;
   private analyserSource?: MediaStreamAudioSourceNode;
   private analyserData?: Uint8Array<ArrayBuffer>;
+  private readonly baseAudioConstraints: MediaTrackConstraints = {
+    channelCount: 1,
+    echoCancellation: true,
+    noiseSuppression: true,
+    autoGainControl: true,
+  };
 
   async connect(
     bootstrap: SessionBootstrap,
@@ -42,14 +48,7 @@ export class RealtimeClient {
       }
     };
 
-    this.localStream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        channelCount: 1,
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true,
-      },
-    });
+    this.localStream = await this.getLocalAudioStream();
 
     this.setupLocalAnalyser();
 
@@ -119,6 +118,89 @@ export class RealtimeClient {
 
   getLocalStream() {
     return this.localStream;
+  }
+
+  private async getLocalAudioStream() {
+    const preferredDeviceId = await this.findPreferredAudioInputDeviceId();
+    const initialStream = await navigator.mediaDevices.getUserMedia({
+      audio: preferredDeviceId
+        ? {
+            ...this.baseAudioConstraints,
+            deviceId: { exact: preferredDeviceId },
+          }
+        : this.baseAudioConstraints,
+    });
+
+    return this.maybeReplaceUnwantedAudioInput(initialStream);
+  }
+
+  private async maybeReplaceUnwantedAudioInput(stream: MediaStream) {
+    const currentTrack = stream.getAudioTracks()[0];
+    if (!currentTrack || !this.isLikelyContinuityMic(currentTrack.label)) {
+      return stream;
+    }
+
+    const currentDeviceId = currentTrack.getSettings().deviceId;
+    const preferredDeviceId = await this.findPreferredAudioInputDeviceId(currentDeviceId);
+    if (!preferredDeviceId) {
+      return stream;
+    }
+
+    const replacementStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        ...this.baseAudioConstraints,
+        deviceId: { exact: preferredDeviceId },
+      },
+    });
+
+    stream.getTracks().forEach((track) => track.stop());
+    return replacementStream;
+  }
+
+  private async findPreferredAudioInputDeviceId(excludingDeviceId?: string) {
+    if (!navigator.mediaDevices?.enumerateDevices) {
+      return undefined;
+    }
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const candidates = devices
+      .filter((device) => device.kind === 'audioinput')
+      .filter((device) => device.deviceId && device.deviceId !== excludingDeviceId)
+      .map((device) => ({ device, score: this.scoreAudioInputDevice(device) }))
+      .filter(({ score }) => score > Number.NEGATIVE_INFINITY)
+      .sort((left, right) => right.score - left.score);
+
+    return candidates[0]?.device.deviceId;
+  }
+
+  private scoreAudioInputDevice(device: MediaDeviceInfo) {
+    const label = device.label.trim().toLowerCase();
+
+    if (!label) {
+      return Number.NEGATIVE_INFINITY;
+    }
+
+    if (this.isLikelyContinuityMic(label)) {
+      return Number.NEGATIVE_INFINITY;
+    }
+
+    let score = 10;
+    if (device.deviceId === 'default') {
+      score += 15;
+    }
+    if (/(macbook|built-?in|internal)(?: .*?)?microphone/.test(label) || /microphone(?: .*?)(macbook|built-?in|internal)/.test(label)) {
+      score += 100;
+    }
+    if (/(airpods|headset|headphones|bluetooth|usb)/.test(label)) {
+      score += 20;
+    }
+
+    return score;
+  }
+
+  private isLikelyContinuityMic(label: string) {
+    const normalized = label.trim().toLowerCase();
+    return /(continuity|iphone|ipad|camera microphone|desk view)/.test(normalized);
   }
 
   setupLocalAnalyser() {
