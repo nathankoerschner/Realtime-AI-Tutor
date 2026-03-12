@@ -5,6 +5,8 @@ const mockConnect = vi.fn();
 const mockDisconnect = vi.fn();
 const mockSetLocalMicMuted = vi.fn();
 const mockSendTextMessage = vi.fn();
+const mockInterruptAssistantResponse = vi.fn();
+const mockReadLocalMicLevel = vi.fn();
 const mockAttachToMediaStream = vi.fn();
 const mockDispose = vi.fn();
 const mockResetSpeechFrameFlag = vi.fn();
@@ -31,6 +33,8 @@ vi.mock('./lib/realtime', () => ({
     disconnect = mockDisconnect;
     setLocalMicMuted = mockSetLocalMicMuted;
     sendTextMessage = mockSendTextMessage;
+    interruptAssistantResponse = mockInterruptAssistantResponse;
+    readLocalMicLevel = mockReadLocalMicLevel;
   },
 }));
 
@@ -50,6 +54,9 @@ describe('App', () => {
     mockDisconnect.mockReset();
     mockSetLocalMicMuted.mockReset();
     mockSendTextMessage.mockReset();
+    mockInterruptAssistantResponse.mockReset();
+    mockReadLocalMicLevel.mockReset();
+    mockReadLocalMicLevel.mockReturnValue(0);
     mockAttachToMediaStream.mockReset();
     mockDispose.mockReset();
     mockResetSpeechFrameFlag.mockReset();
@@ -86,7 +93,10 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: /Learn about linear equations/i }));
     expect(mockSendTextMessage).toHaveBeenCalledWith('Can you teach me about linear equations?');
 
-    fireEvent.keyDown(window, { key: 'm', target: document.body });
+    mockSetLocalMicMuted.mockClear();
+    fireEvent.keyDown(window, { code: 'Space', key: ' ', target: document.body });
+    await waitFor(() => expect(mockSetLocalMicMuted).toHaveBeenCalledWith(false));
+    fireEvent.keyUp(window, { code: 'Space', key: ' ' });
     await waitFor(() => expect(mockSetLocalMicMuted).toHaveBeenCalledWith(true));
 
     // Type and send a message via the chat panel
@@ -151,7 +161,7 @@ describe('App', () => {
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('Unable to send message'));
   });
 
-  it('ignores mute shortcut while typing and cleans up on unmount', async () => {
+  it('ignores hold-to-talk while typing and cleans up on unmount', async () => {
     vi.mocked(fetch).mockResolvedValue({
       ok: true,
       json: async () => ({ client_secret: { value: 'secret' }, session_config: { model: 'm' } }),
@@ -164,8 +174,9 @@ describe('App', () => {
 
     const input = document.createElement('input');
     document.body.appendChild(input);
-    fireEvent.keyDown(input, { key: 'm' });
-    expect(mockSetLocalMicMuted).not.toHaveBeenCalledWith(true);
+    mockSetLocalMicMuted.mockClear();
+    fireEvent.keyDown(input, { code: 'Space', key: ' ', target: input });
+    expect(mockSetLocalMicMuted).not.toHaveBeenCalled();
 
     act(() => {
       unmount();
@@ -487,7 +498,7 @@ describe('App', () => {
     vi.useRealTimers();
   });
 
-  it('stops assistant transcription immediately when the user interrupts', async () => {
+  it('stops assistant audio and transcription immediately when hold-to-talk interrupts', async () => {
     vi.useFakeTimers();
 
     vi.mocked(fetch).mockResolvedValue({
@@ -517,7 +528,12 @@ describe('App', () => {
     act(() => vi.advanceTimersByTime(150));
     expect(screen.getByText('Hello')).toBeInTheDocument();
 
-    // User interruption should freeze the transcript at the visible text.
+    // Hold-to-talk interruption should cancel server audio immediately and freeze the transcript.
+    act(() => {
+      fireEvent.keyDown(window, { code: 'Space', key: ' ', target: document.body });
+    });
+    expect(mockInterruptAssistantResponse).toHaveBeenCalledTimes(1);
+
     act(() => eventHandler({ type: 'input_audio_buffer.speech_started' }));
     act(() => eventHandler({ type: 'response.audio_transcript.delta', delta: ' trailing words' }));
     act(() => eventHandler({ type: 'response.audio_transcript.done' }));
@@ -927,11 +943,10 @@ describe('App', () => {
     vi.useRealTimers();
   });
 
-  it('ignores mute shortcut when not connected', async () => {
+  it('ignores hold-to-talk when not connected', async () => {
     render(<App />);
     mockSetLocalMicMuted.mockClear();
-    // In idle state, pressing 'm' should not toggle mute
-    fireEvent.keyDown(document.body, { key: 'm' });
+    fireEvent.keyDown(window, { code: 'Space', key: ' ', target: document.body });
     expect(mockSetLocalMicMuted).not.toHaveBeenCalled();
   });
 });

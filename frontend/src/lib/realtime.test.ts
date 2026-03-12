@@ -65,7 +65,7 @@ describe('RealtimeClient', () => {
     });
   });
 
-  it('connects, handles remote tracks, sends text, mutes, and disconnects', async () => {
+  it('connects, handles remote tracks, sends text, interrupts responses, mutes, and disconnects', async () => {
     const client = new RealtimeClient();
     const onEvent = vi.fn();
     const onRemoteTrack = vi.fn();
@@ -127,8 +127,11 @@ describe('RealtimeClient', () => {
     );
 
     client.setLocalMicMuted(true);
+    client.interruptAssistantResponse();
     client.sendTextMessage('hello');
-    expect(peer.dataChannel.send).toHaveBeenCalledTimes(3);
+    expect(peer.dataChannel.send).toHaveBeenCalledTimes(5);
+    expect(peer.dataChannel.send).toHaveBeenNthCalledWith(2, JSON.stringify({ type: 'response.cancel' }));
+    expect(peer.dataChannel.send).toHaveBeenNthCalledWith(3, JSON.stringify({ type: 'output_audio_buffer.clear' }));
     expect(peer.addTrack).toHaveBeenCalled();
 
     client.disconnect();

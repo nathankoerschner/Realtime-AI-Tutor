@@ -15,6 +15,10 @@ export class RealtimeClient {
   private localStream?: MediaStream;
   private remoteAudio?: HTMLAudioElement;
   private localMicMuted = false;
+  private analyserContext?: AudioContext;
+  private analyserNode?: AnalyserNode;
+  private analyserSource?: MediaStreamAudioSourceNode;
+  private analyserData?: Uint8Array<ArrayBuffer>;
 
   async connect(
     bootstrap: SessionBootstrap,
@@ -46,6 +50,8 @@ export class RealtimeClient {
         autoGainControl: true,
       },
     });
+
+    this.setupLocalAnalyser();
 
     this.localStream.getAudioTracks().forEach((track) => {
       track.enabled = !this.localMicMuted;
@@ -111,6 +117,66 @@ export class RealtimeClient {
     );
   }
 
+  getLocalStream() {
+    return this.localStream;
+  }
+
+  setupLocalAnalyser() {
+    if (!this.localStream) return;
+
+    this.teardownLocalAnalyser();
+
+    try {
+      const AudioContextCtor = window.AudioContext
+        ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextCtor) return;
+
+      this.analyserContext = new AudioContextCtor();
+      this.analyserNode = this.analyserContext.createAnalyser();
+      this.analyserNode.fftSize = 2048;
+      this.analyserNode.smoothingTimeConstant = 0.82;
+      this.analyserSource = this.analyserContext.createMediaStreamSource(this.localStream);
+      this.analyserSource.connect(this.analyserNode);
+      this.analyserData = new Uint8Array(new ArrayBuffer(this.analyserNode.fftSize));
+    } catch (error) {
+      console.warn('[realtime] Unable to create local mic analyser', error);
+      this.teardownLocalAnalyser();
+    }
+  }
+
+  readLocalMicLevel() {
+    if (!this.analyserNode || !this.analyserData) {
+      return 0;
+    }
+
+    if (this.analyserContext?.state === 'suspended') {
+      void this.analyserContext.resume().catch(() => undefined);
+    }
+
+    this.analyserNode.getByteTimeDomainData(this.analyserData);
+
+    let sumSquares = 0;
+    for (let index = 0; index < this.analyserData.length; index += 1) {
+      const centered = (this.analyserData[index] - 128) / 128;
+      sumSquares += centered * centered;
+    }
+
+    const rms = Math.sqrt(sumSquares / this.analyserData.length);
+    return Math.min(1, Math.max(0, rms * 4.5));
+  }
+
+  teardownLocalAnalyser() {
+    this.analyserSource?.disconnect();
+    this.analyserNode?.disconnect();
+    if (this.analyserContext) {
+      void this.analyserContext.close().catch(() => undefined);
+    }
+    this.analyserSource = undefined;
+    this.analyserNode = undefined;
+    this.analyserContext = undefined;
+    this.analyserData = undefined;
+  }
+
   setLocalMicMuted(muted: boolean) {
     this.localMicMuted = muted;
     this.localStream?.getAudioTracks().forEach((track) => {
@@ -118,12 +184,32 @@ export class RealtimeClient {
     });
   }
 
-  sendTextMessage(text: string) {
+  private assertOpenDataChannel() {
     if (!this.dataChannel || this.dataChannel.readyState !== 'open') {
       throw new Error('Realtime data channel is not open');
     }
+  }
 
-    this.dataChannel.send(
+  interruptAssistantResponse() {
+    this.assertOpenDataChannel();
+
+    this.dataChannel!.send(
+      JSON.stringify({
+        type: 'response.cancel',
+      }),
+    );
+
+    this.dataChannel!.send(
+      JSON.stringify({
+        type: 'output_audio_buffer.clear',
+      }),
+    );
+  }
+
+  sendTextMessage(text: string) {
+    this.assertOpenDataChannel();
+
+    this.dataChannel!.send(
       JSON.stringify({
         type: 'conversation.item.create',
         item: {
@@ -133,7 +219,7 @@ export class RealtimeClient {
         },
       }),
     );
-    this.dataChannel.send(
+    this.dataChannel!.send(
       JSON.stringify({
         type: 'response.create',
         response: {
@@ -144,6 +230,7 @@ export class RealtimeClient {
   }
 
   disconnect() {
+    this.teardownLocalAnalyser();
     this.dataChannel?.close();
     this.peer?.close();
     this.localStream?.getTracks().forEach((track) => track.stop());

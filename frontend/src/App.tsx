@@ -8,6 +8,11 @@ import { RealtimeClient, type RealtimeEvent, type SessionBootstrap } from './lib
 import { EvalCollector } from './lib/evals';
 
 const lessonTopics = ['linear equations', 'molecular structure'] as const;
+const HOLD_TOOLTIP_SHOW_DELAY_MS = 1200;
+const HOLD_TOOLTIP_AUTO_HIDE_MS = 3200;
+const HOLD_SNAP_DURATION_MS = 280;
+
+type HoldSource = 'keyboard' | 'touch' | null;
 
 let messageIdCounter = 0;
 function nextMessageId() {
@@ -31,6 +36,23 @@ async function getErrorMessage(response: Response) {
   }
 }
 
+function isTypingTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  const tagName = target.tagName;
+  return tagName === 'INPUT' || tagName === 'TEXTAREA' || target.isContentEditable;
+}
+
+function detectTouchDevice() {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
 export default function App() {
   const realtimeRef = useRef(new RealtimeClient());
   const visemeEngineRef = useRef(new StreamingVisemeEngine());
@@ -40,8 +62,14 @@ export default function App() {
   const [viseme, setViseme] = useState<VisemeKey>('rest');
   const [speaking, setSpeaking] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [holdingToTalk, setHoldingToTalk] = useState(false);
+  const [holdSource, setHoldSource] = useState<HoldSource>(null);
+  const [micLevel, setMicLevel] = useState(0);
+  const [showHoldTooltip, setShowHoldTooltip] = useState(false);
+  const [holdSnapActive, setHoldSnapActive] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isTouchDevice] = useState(detectTouchDevice);
 
   // Track current streaming assistant message id
   const streamingMsgIdRef = useRef<string | null>(null);
@@ -50,12 +78,18 @@ export default function App() {
   const userMessageIdByItemIdRef = useRef<Record<string, string>>({});
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const interruptedAssistantRef = useRef(false);
+  const micLevelRafRef = useRef<number | null>(null);
+  const micLevelRef = useRef(0);
+  const holdSourceRef = useRef<HoldSource>(null);
+  const tooltipShowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tooltipHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const holdSnapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Word-by-word reveal state
   const wordRevealRef = useRef<{
-    fullText: string;           // accumulated transcript from deltas
-    revealedWordCount: number;  // how many words currently visible
-    done: boolean;              // transcript stream complete
+    fullText: string;
+    revealedWordCount: number;
+    done: boolean;
   }>({ fullText: '', revealedWordCount: 0, done: false });
   const wordRevealTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const speakingRef = useRef(false);
@@ -63,30 +97,197 @@ export default function App() {
   const lastUserSpeechDurationMsRef = useRef(0);
   const lastUserSpeechDuringTutorRef = useRef(false);
 
+  const stopMicLevelLoop = useCallback(() => {
+    if (micLevelRafRef.current != null) {
+      cancelAnimationFrame(micLevelRafRef.current);
+      micLevelRafRef.current = null;
+    }
+    micLevelRef.current = 0;
+    setMicLevel(0);
+  }, []);
+
+  const startMicLevelLoop = useCallback(() => {
+    if (micLevelRafRef.current != null) {
+      return;
+    }
+
+    const tick = () => {
+      const rawLevel = realtimeRef.current.readLocalMicLevel();
+      const smoothedLevel = Math.max(rawLevel, micLevelRef.current * 0.82);
+      micLevelRef.current = smoothedLevel;
+      setMicLevel(smoothedLevel);
+      micLevelRafRef.current = requestAnimationFrame(tick);
+    };
+
+    micLevelRafRef.current = requestAnimationFrame(tick);
+  }, []);
+
+  const clearTooltipTimers = useCallback(() => {
+    if (tooltipShowTimerRef.current) {
+      clearTimeout(tooltipShowTimerRef.current);
+      tooltipShowTimerRef.current = null;
+    }
+    if (tooltipHideTimerRef.current) {
+      clearTimeout(tooltipHideTimerRef.current);
+      tooltipHideTimerRef.current = null;
+    }
+  }, []);
+
+  const triggerHoldSnap = useCallback(() => {
+    if (holdSnapTimerRef.current) {
+      clearTimeout(holdSnapTimerRef.current);
+    }
+
+    setHoldSnapActive(true);
+    holdSnapTimerRef.current = setTimeout(() => {
+      setHoldSnapActive(false);
+      holdSnapTimerRef.current = null;
+    }, HOLD_SNAP_DURATION_MS);
+  }, []);
+
+  const endHoldToTalk = useCallback((source?: Exclude<HoldSource, null>) => {
+    if (!holdSourceRef.current) {
+      return;
+    }
+
+    if (source && holdSourceRef.current !== source) {
+      return;
+    }
+
+    holdSourceRef.current = null;
+    setHoldingToTalk(false);
+    setHoldSource(null);
+    setMuted(true);
+    stopMicLevelLoop();
+  }, [stopMicLevelLoop]);
+
+  const beginHoldToTalk = useCallback((source: Exclude<HoldSource, null>) => {
+    if (connectionState !== 'connected') {
+      return;
+    }
+
+    if (holdSourceRef.current) {
+      return;
+    }
+
+    if (!muted) {
+      return;
+    }
+
+    if (speakingRef.current || streamingMsgIdRef.current) {
+      interruptAssistantMessage();
+      try {
+        realtimeRef.current.interruptAssistantResponse();
+      } catch {
+        // Ignore channel state issues; local UI interruption should still proceed.
+      }
+    }
+
+    holdSourceRef.current = source;
+    setHoldingToTalk(true);
+    setHoldSource(source);
+    setMuted(false);
+    triggerHoldSnap();
+    startMicLevelLoop();
+  }, [connectionState, muted, startMicLevelLoop, triggerHoldSnap]);
+
   useEffect(() => {
     realtimeRef.current.setLocalMicMuted(muted);
   }, [muted]);
 
   useEffect(() => {
     return () => {
+      clearTooltipTimers();
+      if (holdSnapTimerRef.current) {
+        clearTimeout(holdSnapTimerRef.current);
+      }
+      stopMicLevelLoop();
       realtimeRef.current.disconnect();
       visemeEngineRef.current.dispose();
       evalCollectorRef.current.flush();
       stopWordRevealTimer();
     };
-  }, []);
+  }, [clearTooltipTimers, stopMicLevelLoop]);
 
-  // Keyboard shortcut: M to toggle mute when not typing
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'm' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName) && connectionState === 'connected') {
-        e.preventDefault();
-        toggleMute();
+    if (connectionState !== 'connected') {
+      clearTooltipTimers();
+      setShowHoldTooltip(false);
+      return;
+    }
+
+    clearTooltipTimers();
+    setShowHoldTooltip(false);
+
+    tooltipShowTimerRef.current = setTimeout(() => {
+      setShowHoldTooltip(true);
+      tooltipHideTimerRef.current = setTimeout(() => {
+        setShowHoldTooltip(false);
+        tooltipHideTimerRef.current = null;
+      }, HOLD_TOOLTIP_AUTO_HIDE_MS);
+      tooltipShowTimerRef.current = null;
+    }, HOLD_TOOLTIP_SHOW_DELAY_MS);
+
+    return () => clearTooltipTimers();
+  }, [clearTooltipTimers, connectionState]);
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.code !== 'Space') {
+        return;
+      }
+
+      if (event.repeat || isTypingTarget(event.target)) {
+        return;
+      }
+
+      if (connectionState !== 'connected') {
+        return;
+      }
+
+      event.preventDefault();
+      beginHoldToTalk('keyboard');
+    }
+
+    function handleKeyUp(event: KeyboardEvent) {
+      if (event.code !== 'Space') {
+        return;
+      }
+
+      if (holdSourceRef.current !== 'keyboard') {
+        return;
+      }
+
+      event.preventDefault();
+      endHoldToTalk('keyboard');
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [beginHoldToTalk, connectionState, endHoldToTalk]);
+
+  useEffect(() => {
+    function handleBlur() {
+      endHoldToTalk();
+    }
+
+    function handleVisibilityChange() {
+      if (document.visibilityState !== 'visible') {
+        endHoldToTalk();
       }
     }
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [connectionState]);
+
+    window.addEventListener('blur', handleBlur);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      window.removeEventListener('blur', handleBlur);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [endHoldToTalk]);
 
   const showError = useCallback((msg: string) => {
     evalCollectorRef.current.markError('ui', msg);
@@ -95,7 +296,6 @@ export default function App() {
     errorTimerRef.current = setTimeout(() => setError(null), 8000);
   }, []);
 
-  // Add a user message to chat (used for typed messages)
   function addUserMessage(text: string, options?: { flush?: boolean }) {
     const msg: ChatMessage = {
       id: nextMessageId(),
@@ -113,7 +313,6 @@ export default function App() {
     appendMessage();
   }
 
-  // Create a placeholder user message when speech is detected
   function createPendingUserMessage(): string {
     const id = nextMessageId();
     pendingUserMsgIdRef.current = id;
@@ -151,28 +350,25 @@ export default function App() {
     return null;
   }
 
-  // Resolve the pending user message with actual transcript
   function resolvePendingUserMessage(text: string, itemId?: string) {
     const id = bindPendingUserMessageToItem(itemId) ?? pendingUserMsgIdRef.current;
     if (id) {
       setMessages((prev) =>
-        prev.map((m) => (m.id === id ? { ...m, text, pending: false } : m)),
+        prev.map((message) => (message.id === id ? { ...message, text, pending: false } : message)),
       );
       if (pendingUserMsgIdRef.current === id) {
         pendingUserMsgIdRef.current = null;
       }
       clearUserMessageItemBinding(id);
     } else {
-      // No pending placeholder — just append (fallback)
       addUserMessage(text);
     }
   }
 
-  // Remove empty pending user message (e.g. if transcription was empty)
   function removePendingUserMessage(itemId?: string) {
     const id = bindPendingUserMessageToItem(itemId) ?? pendingUserMsgIdRef.current;
     if (id) {
-      setMessages((prev) => prev.filter((m) => m.id !== id));
+      setMessages((prev) => prev.filter((message) => message.id !== id));
       if (pendingUserMsgIdRef.current === id) {
         pendingUserMsgIdRef.current = null;
       }
@@ -190,14 +386,10 @@ export default function App() {
     const hasLatinLetters = /[A-Za-z]/.test(normalized);
     const hasNonLatinLetters = /[^\u0000-\u024F\s\d\p{P}\p{S}]/u.test(normalized);
 
-    // Very short snippets detected while the tutor is already speaking are
-    // usually speaker bleed / room noise rather than an intentional user turn.
     if (happenedDuringTutorSpeech && speechDurationMs < 1200 && wordCount <= 3) {
       return true;
     }
 
-    // We want English transcripts only. If the ASR returns non-Latin script
-    // without any Latin letters, treat it as a bad transcript and drop it.
     if (hasNonLatinLetters && !hasLatinLetters) {
       return true;
     }
@@ -205,7 +397,6 @@ export default function App() {
     return false;
   }
 
-  // Start a new streaming assistant message and begin word reveal
   function startAssistantMessage(): string {
     const id = nextMessageId();
     streamingMsgIdRef.current = id;
@@ -223,7 +414,6 @@ export default function App() {
     return id;
   }
 
-  // Buffer transcript text (don't display yet — the reveal timer handles display)
   function bufferTranscriptDelta(delta: string) {
     if (!streamingMsgIdRef.current) {
       startAssistantMessage();
@@ -231,39 +421,33 @@ export default function App() {
     wordRevealRef.current.fullText += delta;
   }
 
-  // Mark transcript as complete — the reveal timer will finalize once all words are shown
   function markTranscriptDone() {
     wordRevealRef.current.done = true;
   }
 
-  // Reveal the next word in the assistant message
   function revealNextWord() {
     const reveal = wordRevealRef.current;
     const id = streamingMsgIdRef.current;
-    /* v8 ignore next */
     if (!id) return;
 
-    const words = reveal.fullText.split(/(\s+)/); // preserve whitespace
+    const words = reveal.fullText.split(/(\s+)/);
     const totalTokens = words.length;
     if (reveal.revealedWordCount >= totalTokens) {
-      // All buffered words shown — if transcript is done, finalize
       if (reveal.done) {
         finalizeAssistantMessage();
       }
       return;
     }
 
-    // Only advance when the AI is actually speaking audio
     if (!speakingRef.current && !reveal.done) return;
 
-    reveal.revealedWordCount++;
+    reveal.revealedWordCount += 1;
     const visibleText = words.slice(0, reveal.revealedWordCount).join('');
 
     setMessages((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, text: visibleText } : m)),
+      prev.map((message) => (message.id === id ? { ...message, text: visibleText } : message)),
     );
 
-    // If transcript is done and all words now revealed, finalize
     if (reveal.done && reveal.revealedWordCount >= totalTokens) {
       finalizeAssistantMessage();
     }
@@ -271,7 +455,6 @@ export default function App() {
 
   function startWordRevealTimer() {
     stopWordRevealTimer();
-    // ~150ms per token ≈ word-by-word at natural speech pace
     wordRevealTimerRef.current = setInterval(revealNextWord, 150);
   }
 
@@ -282,16 +465,13 @@ export default function App() {
     }
   }
 
-  // Finalize the streaming assistant message
   function finalizeAssistantMessage() {
     const id = streamingMsgIdRef.current;
-    /* v8 ignore next */
     if (!id) return;
     stopWordRevealTimer();
-    // Show the full text
     const fullText = wordRevealRef.current.fullText;
     setMessages((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, text: fullText, streaming: false } : m)),
+      prev.map((message) => (message.id === id ? { ...message, text: fullText, streaming: false } : message)),
     );
     streamingMsgIdRef.current = null;
     interruptedAssistantRef.current = false;
@@ -310,9 +490,9 @@ export default function App() {
 
     setMessages((prev) => {
       if (!visibleText.trim()) {
-        return prev.filter((m) => m.id !== id);
+        return prev.filter((message) => message.id !== id);
       }
-      return prev.map((m) => (m.id === id ? { ...m, text: visibleText, streaming: false } : m));
+      return prev.map((message) => (message.id === id ? { ...message, text: visibleText, streaming: false } : message));
     });
 
     streamingMsgIdRef.current = null;
@@ -325,6 +505,10 @@ export default function App() {
     evaluator.markSessionStart();
     evaluator.markConnectionAttempt();
 
+    endHoldToTalk();
+    setMuted(true);
+    setShowHoldTooltip(false);
+    setHoldSnapActive(false);
     setError(null);
     setMessages([]);
     setConnectionState('connecting');
@@ -357,6 +541,15 @@ export default function App() {
   function stopSession() {
     evalCollectorRef.current.markSessionEnd();
 
+    endHoldToTalk();
+    clearTooltipTimers();
+    setShowHoldTooltip(false);
+    if (holdSnapTimerRef.current) {
+      clearTimeout(holdSnapTimerRef.current);
+      holdSnapTimerRef.current = null;
+    }
+    setHoldSnapActive(false);
+    setMuted(true);
     realtimeRef.current.disconnect();
     visemeEngineRef.current.dispose();
     setConnectionState('idle');
@@ -372,7 +565,6 @@ export default function App() {
     stopWordRevealTimer();
     wordRevealRef.current = { fullText: '', revealedWordCount: 0, done: false };
 
-    // Flush eval data when session ends
     evalCollectorRef.current.flush();
   }
 
@@ -382,10 +574,6 @@ export default function App() {
   }
 
   function handleAudioSnapshot(snapshot: AudioAnalysisSnapshot) {
-    // If we just interrupted an assistant turn and then receive a fresh remote
-    // speaking frame before any new transcript has been attached, treat that as
-    // the next tutor response starting. This lets an immediate follow-up reply
-    // begin in the same tick without being swallowed by the interruption guard.
     if (snapshot.speaking && interruptedAssistantRef.current && !streamingMsgIdRef.current) {
       interruptedAssistantRef.current = false;
     }
@@ -408,10 +596,6 @@ export default function App() {
           interruptAssistantMessage();
         }
 
-        // Always anchor the user turn as soon as speech starts so that if the
-        // assistant is interrupted, the eventual transcript stays ordered ahead
-        // of any follow-up tutor response. Probable bleed-through still gets
-        // filtered later by shouldIgnoreTranscript/removePendingUserMessage.
         if (!pendingUserMsgIdRef.current) {
           createPendingUserMessage();
         }
@@ -449,7 +633,6 @@ export default function App() {
           break;
         }
 
-        // Fill in the placeholder with the actual transcript.
         resolvePendingUserMessage(transcript, itemId);
         lastUserSpeechDurationMsRef.current = 0;
         lastUserSpeechDuringTutorRef.current = false;
@@ -457,9 +640,6 @@ export default function App() {
       }
       case 'conversation.item.input_audio_transcription.failed': {
         const itemId = (event as any).item_id as string | undefined;
-        // Input audio transcription failed — only surface it if this looked
-        // like an intentional user turn rather than background noise during
-        // tutor audio.
         console.warn('[tutor] Input audio transcription failed', event);
         if (lastUserSpeechDuringTutorRef.current) {
           removePendingUserMessage(itemId);
@@ -486,7 +666,6 @@ export default function App() {
           interruptedAssistantRef.current = false;
           break;
         }
-        // Mark transcript complete — reveal timer will finalize once all words shown
         markTranscriptDone();
         break;
       }
@@ -496,16 +675,16 @@ export default function App() {
           interruptedAssistantRef.current = false;
           break;
         }
-        // Also finalize in case transcript.done didn't fire
         if (streamingMsgIdRef.current) {
           markTranscriptDone();
         }
         break;
-      case 'error':
+      case 'error': {
         const errorMsg = typeof event.error === 'object' ? JSON.stringify(event.error) : 'Realtime error';
         evaluator.markError('realtime', errorMsg, { event_type: event.type });
         showError(errorMsg);
         break;
+      }
       default:
         break;
     }
@@ -517,9 +696,6 @@ export default function App() {
         interruptAssistantMessage();
       }
 
-      // Flush the typed user turn into the DOM before the next streamed tutor
-      // response can start, so ordering stays stable even when the backend
-      // replies immediately.
       addUserMessage(text, { flush: true });
       visemeEngineRef.current.resetSpeechFrameFlag();
       realtimeRef.current.sendTextMessage(text);
@@ -529,19 +705,20 @@ export default function App() {
   }
 
   function toggleMute() {
-    setMuted((current) => {
-      const next = !current;
-      realtimeRef.current.setLocalMicMuted(next);
-      return next;
-    });
+    if (holdingToTalk) {
+      endHoldToTalk();
+      return;
+    }
+
+    setMuted((current) => !current);
   }
 
   const isConnected = connectionState === 'connected';
   const isActive = connectionState !== 'idle';
+  const tooltipText = isTouchDevice ? 'Hold button to talk' : 'Hold space to talk';
 
   return (
     <main className="app-shell">
-      {/* Error toast */}
       {error && (
         <div className="error-toast" role="alert">
           <p>{error}</p>
@@ -550,7 +727,6 @@ export default function App() {
       )}
 
       {!isActive ? (
-        /* Idle / start screen — centered */
         <section className="hero-panel">
           <header className="app-header app-header-centered">
             <span className="eyebrow">Live + AI</span>
@@ -559,7 +735,6 @@ export default function App() {
           <button className="start-orb" onClick={startSession}>Start</button>
         </section>
       ) : (
-        /* Active session — avatar left, chat right */
         <div className="session-layout">
           <section className="avatar-area">
             <div className="avatar-center-wrapper">
@@ -580,8 +755,15 @@ export default function App() {
             <SessionControls
               state={connectionState}
               muted={muted}
+              holdingToTalk={holdingToTalk}
+              micLevel={micLevel}
+              showTooltip={showHoldTooltip}
+              tooltipText={tooltipText}
+              holdSnapActive={holdSnapActive}
               onStop={stopSession}
               onToggleMute={toggleMute}
+              onHoldStart={() => beginHoldToTalk('touch')}
+              onHoldEnd={() => endHoldToTalk('touch')}
             />
           </section>
 
